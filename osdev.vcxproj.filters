@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{f3471e62-e98c-484d-9794-2a286e4a3971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="setup">
+      <UniqueIdentifier>{a9d518dc-a95d-46c2-b65b-6971bbdc6019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="boot">
+      <UniqueIdentifier>{77729ea3-ef07-487c-8044-428457e99ee5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\video.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\console.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elf.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\format.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiboot.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\paging.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physmem.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processor.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\system.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="src\linker.ld">
+      <Filter>setup</Filter>
+    </None>
+    <None Include="src\linker.low">
+      <Filter>setup</Filter>
+    </None>
+    <None Include="src\loader.low">
+      <Filter>setup</Filter>
+    </None>
+    <None Include="src\loader.s">
+      <Filter>boot</Filter>
+    </None>
+    <None Include="src\processor.s">
+      <Filter>core</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\video.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\console.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cppsupp.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\format.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gdt.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\idt.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\irq.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\isrs.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kb.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kernel.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\paging.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physmem.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

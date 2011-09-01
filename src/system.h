@@ -1,0 +1,25 @@
+
+#ifndef _SYSTEM_H_
+#define _SYSTEM_H_
+
+typedef unsigned long size_t;
+typedef unsigned long addr_t;
+
+typedef unsigned int uint32_t;
+typedef int int32_t;
+
+struct regs
+{
+    unsigned int gs, fs, es, ds;
+    unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    unsigned int int_no, err_code;
+    unsigned int eip, cs, eflags, useresp, ss;    
+};
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void irq_install_handler(int irq, void (*handler)(struct regs *r));
+
+
+#endif // _SYSTEM_H_

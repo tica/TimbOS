@@ -1,0 +1,4 @@
+Type into grub:
+
+kernel 200+2000
+boot
