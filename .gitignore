@@ -3,3 +3,7 @@
 *.sdf
 *.suo
 *.user
+obj
+*.img
+bin
+*.log
