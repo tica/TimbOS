@@ -10,7 +10,7 @@ CXX-SOURCES	= $(shell find $(SRC-DIR) -type f -name '*.cpp')
 LINKER-LD	= $(SRC-DIR)/linker.ld
 
 TARGET-PLATFORM = i586-elf
-TOOLS-PREFIX = /usr/cross/bin/$(TARGET-PLATFORM)-
+TOOLS-PREFIX = /usr/local/cross/bin/$(TARGET-PLATFORM)-
 
 KERNEL-BIN			= $(BIN-DIR)/kernel.bin
 FLOPPY-IMG			= floppy.img

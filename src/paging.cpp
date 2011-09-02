@@ -333,8 +333,8 @@ void map_page( addr_t physical_addr, addr_t virtual_addr, int flags )
     unsigned long pdindex = (unsigned long)virtual_addr >> 22;
     unsigned long ptindex = (unsigned long)virtual_addr >> 12 & 0x03FF;
     
-    unsigned long * pd = (unsigned long *)0xFFFFF000;
-	pd = 0;
+    //unsigned long * pd = (unsigned long *)0xFFFFF000;
+	//pd = 0;
     // Here you need to check whether the PD entry is present.
     // When it is not present, you need to create a new empty PT and
     // adjust the PDE accordingly.
