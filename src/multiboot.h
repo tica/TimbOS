@@ -96,6 +96,18 @@ typedef struct multiboot_info
 	} u;
 	unsigned long mmap_length;
 	unsigned long mmap_addr;
+
+	unsigned long drives_length;
+    unsigned long drives_addr;
+    unsigned long config_table;     // void *
+    unsigned long boot_loader_name; // const char *
+    unsigned long apm_table;        // struct apm_table *
+    unsigned long vbe_control_info; // void *
+    unsigned long vbe_mode_info;    // void *
+    unsigned short vbe_mode;
+    unsigned short vbe_interface_seg;
+    unsigned short vbe_interface_off;
+    unsigned short vbe_interface_len;
 } multiboot_info_t;
 
 /* The module structure. */

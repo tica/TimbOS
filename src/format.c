@@ -10,6 +10,21 @@ void format_chars( output_func_t output, void* ptr, const char* str )
 	}
 }
 
+void format_number( output_func_t output, void* ptr, unsigned int number )
+{
+	static char digit_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	
+	int digit = number % 10;
+	int remainder = number / 10;
+
+	if( remainder > 0 )
+	{
+		format_number( output, ptr, remainder );
+	}
+
+	output( digit_chars[digit], ptr );
+}
+
 void format_number_hex( output_func_t output, void* ptr, unsigned int number )
 {
 	format_chars( output, ptr, "0x" );
@@ -35,6 +50,9 @@ void format_string_varg( output_func_t output, void* ptr, const char* format, va
 			
 			switch( *format )
 			{
+			case 'd':
+				format_number( output, ptr, va_arg( ap, unsigned int ) );
+				break;
 			case 's':
 				format_chars( output, ptr, va_arg( ap, char* ) );
 				break;

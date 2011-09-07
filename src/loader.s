@@ -19,7 +19,8 @@ KERNEL_PAGE_NUMBER equ (KERNEL_VIRTUAL_BASE >> 22)  ; Page directory index of ke
 
 section .data
 align 0x1000
-BootPageDirectory:
+[global KernelPageDirectory]
+KernelPageDirectory:
     ; This page directory entry identity-maps the first 4MB of the 32-bit physical address space.
     ; All bits are clear except the following:
     ; bit 7: PS The kernel page is 4MB.
@@ -46,7 +47,7 @@ STACKSIZE equ 0x8000
 _loader:
     ; NOTE: Until paging is set up, the code must be position-independent and use physical
     ; addresses, not virtual ones!
-    mov ecx, (BootPageDirectory - KERNEL_VIRTUAL_BASE)
+    mov ecx, (KernelPageDirectory - KERNEL_VIRTUAL_BASE)
     mov cr3, ecx                                        ; Load Page Directory Base Register.
 
     mov ecx, cr4
@@ -64,7 +65,7 @@ _loader:
 StartInHigherHalf:
     ; Unmap the identity-mapped first 4MB of physical address space. It should not be needed
     ; anymore.
-    mov dword [BootPageDirectory], 0
+    mov dword [KernelPageDirectory], 0
     invlpg [0]
 
     ; NOTE: From now on, paging should be enabled. The first 4MB of physical address space is
@@ -103,11 +104,6 @@ static_dtors_loop:
     hlt                          ; halt machine should kernel return
 
 
-[global get_boot_pagedir]
-get_boot_pagedir:
-	mov eax, BootPageDirectory
-	retn
-	
 [global kmap_virt_phys]
 kmap_virt_phys:
 	pop eax
@@ -129,7 +125,7 @@ idt_store:
 [global set_pagedir]
 set_pagedir:
 	push eax
-	mov eax, (BootPageDirectory - KERNEL_VIRTUAL_BASE)
+	mov eax, (KernelPageDirectory - KERNEL_VIRTUAL_BASE)
 	mov cr3, eax
 	pop eax
 	ret

@@ -2,7 +2,7 @@
 #include "system.h"
 #include "processor.h"
 #include "memory.h"
-#include "paging.h"
+//#include "paging.h"
 #include "debug.h"
 
 /* Defines an IDT entry */

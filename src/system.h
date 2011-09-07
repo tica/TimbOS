@@ -3,7 +3,7 @@
 #define _SYSTEM_H_
 
 typedef unsigned long size_t;
-typedef unsigned long addr_t;
+typedef unsigned long uintptr_t;
 
 typedef unsigned int uint32_t;
 typedef int int32_t;

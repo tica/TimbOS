@@ -138,7 +138,7 @@ char *exception_messages[] =
     "Reserved"
 };
 
-void paging_handle_fault( struct regs* r, addr_t virtual_address );
+void paging_handle_fault( struct regs* r, uintptr_t virtual_address );
 
 /* All of our Exception handling Interrupt Service Routines will
 *  point to this function. This will tell us what exception has

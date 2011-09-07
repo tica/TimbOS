@@ -2,6 +2,8 @@
 #include "physmem.h"
 
 #include "debug.h"
+#include "console.h"
+extern CONSOLE console;
 
 const size_t PAGE_SIZE = 0x1000;
 
@@ -12,7 +14,7 @@ const size_t PAGEFRAME_BITMAP_SIZE = MAXIMUM_MEMORY / (PAGEFRAMES_PER_BITMAP_ENT
 int s_physmem_allocation_bitmap[PAGEFRAME_BITMAP_SIZE] = { 0 };
 
 
-addr_t physmem_alloc_pageframe()
+uintptr_t physmem_alloc_pageframe()
 {
 	for( size_t i = 0; i < PAGEFRAME_BITMAP_SIZE; ++i )
 	{
@@ -38,7 +40,7 @@ addr_t physmem_alloc_pageframe()
 	return 0;
 }
 
-void physmem_set_pageframe_status( addr_t physical_addr, bool free )
+void physmem_set_pageframe_status( uintptr_t physical_addr, bool free )
 {
 	size_t index = (physical_addr >> 12) / PAGEFRAMES_PER_BITMAP_ENTRY;
 	//assert( index < PAGEFRAME_BITMAP_SIZE)
@@ -51,7 +53,7 @@ void physmem_set_pageframe_status( addr_t physical_addr, bool free )
 		s_physmem_allocation_bitmap[index] &= ~(1 << bit);
 }
 
-void physmem_free_pageframe( addr_t physical_addr )
+void physmem_free_pageframe( uintptr_t physical_addr )
 {
 	physmem_set_pageframe_status( physical_addr, true );
 }
@@ -63,19 +65,20 @@ void physmem_init_from_mbt( multiboot_info_t* mbt )
 
 	memory_map_t* mmap = (memory_map_t*)mbt->mmap_addr;
 
-	addr_t main_memory = 0;
+	uintptr_t main_memory = 0;
 	size_t main_memory_size = 0;
 
 	while((unsigned int)mmap < mbt->mmap_addr + mbt->mmap_length)
-	{		
-		debug_bochs_printf( "type = %x: mmap->base_addr = '%x mmap->length = %x\n", mmap->type,
-			mmap->base_addr_low,
-			mmap->length_low );
-
-		if( mmap->base_addr_low == 0x00100000 )
+	{
+		if( mmap->type == 0x1 )
 		{
-			main_memory = mmap->base_addr_low;
-			main_memory_size = mmap->length_low;
+			console.printf( "Found usable memory %x - %x\n", mmap->base_addr_low, mmap->base_addr_low + mmap->length_low );
+
+			if( mmap->base_addr_low == 0x00100000 )
+			{
+				main_memory = mmap->base_addr_low;
+				main_memory_size = mmap->length_low;
+			}
 		}
 
 		mmap = (memory_map_t*) ( (unsigned int)mmap + mmap->size + sizeof(unsigned int) );

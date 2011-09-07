@@ -75,6 +75,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="rtl.h" />
     <ClInclude Include="src\console.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\elf.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="src\io.h" />
     <ClInclude Include="src\memory.h" />
     <ClInclude Include="src\multiboot.h" />
+    <ClInclude Include="src\pagedir.h" />
     <ClInclude Include="src\paging.h" />
     <ClInclude Include="src\physmem.h" />
     <ClInclude Include="src\processor.h" />
@@ -107,6 +109,7 @@
     <ClCompile Include="src\kb.c" />
     <ClCompile Include="src\kernel.cpp" />
     <ClCompile Include="src\memory.c" />
+    <ClCompile Include="src\pagedir.cpp" />
     <ClCompile Include="src\paging.cpp" />
     <ClCompile Include="src\physmem.cpp" />
     <ClCompile Include="src\video.c" />

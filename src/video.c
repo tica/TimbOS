@@ -21,18 +21,6 @@ void video_print( struct VIDEO_CHAR* destination, const char* string, unsigned c
 	}
 }
 
-void video_print_number( struct VIDEO_CHAR* destination, unsigned int number, unsigned char color )
-{	
-	while( number )
-	{	
-		destination->ch = '0' + (number % 10);
-		destination->color = color;
-		destination++;
-		
-		number /= 10;
-	}
-}
-
 void video_clear( struct VIDEO_CHAR* destination )
 {
 	size_t count = SCREEN_SIZE;

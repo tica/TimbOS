@@ -10,6 +10,12 @@
     <Filter Include="boot">
       <UniqueIdentifier>{77729ea3-ef07-487c-8044-428457e99ee5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{853bb870-31fa-4a5e-a669-4011b673165b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\mm">
+      <UniqueIdentifier>{23e2f1b0-0b3d-4e57-adc2-d2b5691ca111}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -30,16 +36,7 @@
     <ClInclude Include="src\io.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\memory.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="src\multiboot.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\paging.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\physmem.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="src\processor.h">
@@ -47,6 +44,21 @@
     </ClInclude>
     <ClInclude Include="src\system.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="rtl.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pagedir.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\paging.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physmem.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory.h">
+      <Filter>lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,14 +110,17 @@
     <ClCompile Include="src\kernel.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\memory.c">
-      <Filter>core</Filter>
+    <ClCompile Include="src\pagedir.cpp">
+      <Filter>core\mm</Filter>
     </ClCompile>
     <ClCompile Include="src\paging.cpp">
-      <Filter>core</Filter>
+      <Filter>core\mm</Filter>
     </ClCompile>
     <ClCompile Include="src\physmem.cpp">
-      <Filter>core</Filter>
+      <Filter>core\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory.c">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -36,7 +36,6 @@ extern "C"
 #endif
 
 void video_print( struct VIDEO_CHAR* destination, const char* string, unsigned char color );
-void video_print_number( struct VIDEO_CHAR* destination, unsigned int number, unsigned char color );
 
 void video_clear( struct VIDEO_CHAR* destination );
 void video_display( const struct VIDEO_CHAR* screen );
