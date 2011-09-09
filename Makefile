@@ -62,13 +62,9 @@ $(KERNEL-BIN): $(LINKER-LD) $(ASM-OBJECTS) $(C-OBJECTS) $(CXX-OBJECTS) Makefile
 	@mkdir -p $(BIN-DIR)
 	@$(TOOLS-PREFIX)ld -T $(LINKER-LD) -o $(KERNEL-BIN) $(ASM-OBJECTS) $(C-OBJECTS) $(CXX-OBJECTS)
 
-$(FLOPPY-IMG): grub/stage1 grub/stage2 grub/pad $(KERNEL-BIN) Makefile
-	@echo "[cat]   $@ <= (grub/stage1 grub/stage2 grub/pad $(KERNEL-BIN))"
-	@cat grub/stage1 grub/stage2 grub/pad $(KERNEL-BIN) > $(FLOPPY-IMG)
-
-$(FLOPPY-1440k-IMG): $(FLOPPY-IMG)
-	@echo "[dd]    $@ <= ($<)"
-	@dd if=$(FLOPPY-IMG) of=$(FLOPPY-1440k-IMG) bs=1440K conv=sync 2> /dev/nul
-	
+$(FLOPPY-1440k-IMG): $(KERNEL-BIN) build/template.img Makefile
+	@echo "[create-image]	$@ <= ($<)"
+	@build/create-image.sh $(KERNEL-BIN) $(FLOPPY-1440k-IMG)	
+		
 -include $(C-DEPS)
 -include $(CXX-DEPS)
