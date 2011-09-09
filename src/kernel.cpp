@@ -8,7 +8,7 @@
 #include "processor.h"
 #include "elf.h"
 #include "paging.h"
-#include "physmem.h"
+#include "pmem.h"
 
 struct CONSOLE console;
 
@@ -54,13 +54,15 @@ void check_cpu(void)
 }
 
 
-extern "C" void kmain( multiboot_info_t* phyiscal_mbt, unsigned int magic )
+extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 {
-	TRACE2( phyiscal_mbt, magic );
+	TRACE2( physical_multiboot_info, magic );
 
 	paging_init();
 
-	console.printf( "This is TimbOS\n" );
+	console.printf( "******************************************************************\n" );
+	console.printf( "************************* This is TimbOS *************************\n" );
+	console.printf( "******************************************************************\n" );
 	check_cpu();
 
 	gdt_install();
@@ -68,9 +70,9 @@ extern "C" void kmain( multiboot_info_t* phyiscal_mbt, unsigned int magic )
     isrs_install();
     irq_install();
 	keyboard_install();
-	irq_install_handler( 0, timer_handler );	
+	irq_install_handler( 0, timer_handler );
 
-	multiboot_info_t* virtual_mbt = (multiboot_info_t*)KernelPageDirectory.physical_to_virtual( phyiscal_mbt );
+	multiboot_info_t* virtual_mbt = (multiboot_info_t*)KernelPageDirectory.physical_to_virtual( physical_multiboot_info );
 
 	if( virtual_mbt->flags & (1 << 9) )
 	{
@@ -105,7 +107,7 @@ extern "C" void kmain( multiboot_info_t* phyiscal_mbt, unsigned int magic )
 		console.printf( "Found memory map...\n" );
 
 		virtual_mbt->mmap_addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->mmap_addr );
-		physmem_init_from_mbt( virtual_mbt );
+		pmem_init( virtual_mbt );
 	}
 
 	if( virtual_mbt->flags & (1 << 5) )

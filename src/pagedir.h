@@ -5,7 +5,8 @@
 #include "system.h"
 
 #ifndef _MSC_VER
-#define ATTRIBUTE_PACKED__ __attribute__((packed))
+#define ATTRIBUTE_PACKED__		__attribute__((packed))
+#define ATTRIBUTE_PAGEALIGN__	__attribute__((aligned(4096)))
 #endif
 
 struct ATTRIBUTE_PACKED__ page_dir_entry_t
@@ -45,7 +46,7 @@ struct page_table_entry_t
 	unsigned int accessed			: 1;
 	unsigned int dirty				: 1;
 	unsigned int reserved1			: 2;
-	unsigned int available_bits		: 3;	
+	unsigned int available_bits		: 3;
 	unsigned int page_addr			: 20;
 };
 
@@ -53,24 +54,17 @@ struct PageDirectory
 {
 	struct page_dir_entry_t	entries[1024];
 
-	template<typename T>
-	uintptr_t physical_to_virtual( T* addr ) const
-	{
-		return physical_to_virtual( (uintptr_t)addr );
-	}
-
-	template<typename T>
-	uintptr_t virtual_to_physical( T* addr ) const
-	{
-		return virtual_to_physical( (uintptr_t)addr );
-	}
-
 	page_dir_entry_t& operator[]( int idx )
 	{
 		return entries[idx];
 	}
 
 	uintptr_t virtual_to_physical( uintptr_t addr ) const;
+	uintptr_t virtual_to_physical( void* addr ) const
+	{
+		return virtual_to_physical( (uintptr_t)addr );
+	}
+
 	uintptr_t physical_to_virtual( uintptr_t addr ) const;
 };
 

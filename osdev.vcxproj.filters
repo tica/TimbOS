@@ -54,11 +54,11 @@
     <ClInclude Include="src\paging.h">
       <Filter>core\mm</Filter>
     </ClInclude>
-    <ClInclude Include="src\physmem.h">
-      <Filter>core\mm</Filter>
-    </ClInclude>
     <ClInclude Include="src\memory.h">
       <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pmem.h">
+      <Filter>core\mm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,11 +116,11 @@
     <ClCompile Include="src\paging.cpp">
       <Filter>core\mm</Filter>
     </ClCompile>
-    <ClCompile Include="src\physmem.cpp">
-      <Filter>core\mm</Filter>
-    </ClCompile>
     <ClCompile Include="src\memory.c">
       <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pmem.cpp">
+      <Filter>core\mm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

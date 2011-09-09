@@ -85,7 +85,7 @@
     <ClInclude Include="src\multiboot.h" />
     <ClInclude Include="src\pagedir.h" />
     <ClInclude Include="src\paging.h" />
-    <ClInclude Include="src\physmem.h" />
+    <ClInclude Include="src\pmem.h" />
     <ClInclude Include="src\processor.h" />
     <ClInclude Include="src\system.h" />
     <ClInclude Include="src\video.h" />
@@ -111,7 +111,7 @@
     <ClCompile Include="src\memory.c" />
     <ClCompile Include="src\pagedir.cpp" />
     <ClCompile Include="src\paging.cpp" />
-    <ClCompile Include="src\physmem.cpp" />
+    <ClCompile Include="src\pmem.cpp" />
     <ClCompile Include="src\video.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

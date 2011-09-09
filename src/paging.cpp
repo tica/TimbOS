@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "elf.h"
 #include "console.h"
+#include "pmem.h"
 
 
 void invlpg( uintptr_t virtual_addr )
@@ -14,30 +15,32 @@ void invlpg( uintptr_t virtual_addr )
 	asm( "invlpg (%%eax)" : : "a"(virtual_addr) );
 }
 
-uintptr_t myread_cr3()
+/*
+uintptr_t read_cr3()
 {
 	uintptr_t dummy;
 	asm( "mov %%cr3, %0" : "=r" (dummy));
 	return dummy;
 }
+*/
 
 
-struct page_table_entry_t __attribute__((aligned(4096))) test_page_table[0x400];
-struct page_table_entry_t __attribute__((aligned(4096))) kernel_page_table[0x400];
+struct page_table_entry_t ATTRIBUTE_PAGEALIGN__ test_page_table[0x400];
+struct page_table_entry_t ATTRIBUTE_PAGEALIGN__ kernel_page_table[0x400];
 
 void paging_init( void )
 {
 	TRACE();
 
 	debug_bochs_printf( "sizeof(page_dir_entry_t) = %x\n", sizeof(page_dir_entry_t) );
-	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", KernelPageDirectory, myread_cr3() );
+	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", KernelPageDirectory, read_cr3() );
 
 	// Map the page directory (acting as a page table!) to the last page directory entry, to allow access
 	// to the page tables through virtual addresses
 	KernelPageDirectory[0x3FF].present = 1;
 	KernelPageDirectory[0x3FF].writable = 1;
 	KernelPageDirectory[0x3FF].enable4m = 0;
-	KernelPageDirectory[0x3FF].page_table_addr = myread_cr3() >> 12;
+	KernelPageDirectory[0x3FF].page_table_addr = read_cr3() >> 12;
 }
 
 extern CONSOLE console;
@@ -69,13 +72,16 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 
 			while( size > 0 )
 			{
+				uintptr_t physical_address = KernelPageDirectory.virtual_to_physical( virtual_addr );
+				pmem_mark_used( physical_address );
+
 				page_table_entry_t* pte = &kernel_page_table[pgindex];
-				pte->page_addr = KernelPageDirectory.virtual_to_physical( virtual_addr ) >> 12;
+				pte->page_addr = physical_address >> 12;
 				pte->present = 1;
 				pte->user = 0;
 				pte->writable = esh->sh_flags & SHF_WRITE ? 1 : 0;
 
-				debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, pte->page_addr << 12, pgindex );
+				debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, physical_address, pgindex );
 
 				pgindex++;
 				virtual_addr += 0x1000;
