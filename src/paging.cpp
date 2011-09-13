@@ -81,14 +81,15 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 				pte->user = 0;
 				pte->writable = esh->sh_flags & SHF_WRITE ? 1 : 0;
 
-				debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, physical_address, pgindex );
+				//debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, physical_address, pgindex );
 
 				pgindex++;
-				virtual_addr += 0x1000;
-				if( size > 0x1000 )
-					size -= 0x1000;
-				else
-					size = 0;
+
+				unsigned int page_step = 0x1000 - (virtual_addr % 0x1000);
+				if( page_step > size ) page_step = size;
+
+				virtual_addr += page_step;
+				size -= page_step;
 			}
 		}
 		esh++;

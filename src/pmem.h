@@ -6,11 +6,11 @@
 
 struct multiboot_info;
 
-void pmem_init( struct multiboot_info* mbt );
+void		pmem_init( struct multiboot_info* mbt );
 
-uintptr_t pmem_alloc();
-void pmem_free( uintptr_t physical_addr );
+uintptr_t	pmem_alloc();
+void		pmem_free( uintptr_t physical_addr );
 
-void pmem_mark_used( uintptr_t physical_addr );
+void		pmem_mark_used( uintptr_t physical_addr );
 
 #endif // _PHYSMEM_H_

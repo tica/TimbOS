@@ -78,6 +78,17 @@
     <None Include="src\processor.s">
       <Filter>core</Filter>
     </None>
+    <None Include="src\isr.s">
+      <Filter>core</Filter>
+    </None>
+    <None Include="src\irq.s">
+      <Filter>core</Filter>
+    </None>
+    <None Include="runmake.cmd" />
+    <None Include="runmake.sh" />
+    <None Include="src\io.s">
+      <Filter>core</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\video.c">
@@ -96,9 +107,6 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\idt.c">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\irq.c">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\isrs.c">
@@ -121,6 +129,9 @@
     </ClCompile>
     <ClCompile Include="src\pmem.cpp">
       <Filter>core\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\irqs.c">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

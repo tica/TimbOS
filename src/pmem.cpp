@@ -18,6 +18,14 @@ static	size_t	s_actual_pageframe_count = 0;
 static int s_pageframes[MAXIMUM_PAGEFRAME_COUNT] = {};
 static int s_prev_index = 0;
 
+static void pmem_set_status( uintptr_t physical_addr, bool free )
+{
+	int idx = physical_addr / PAGE_SIZE;
+	int& entry = s_pageframes[idx];
+
+	entry = free ? 0 : 1;
+}
+
 uintptr_t pmem_alloc()
 {
 	for( size_t i = 0; i < s_actual_pageframe_count; ++i )
@@ -39,12 +47,9 @@ uintptr_t pmem_alloc()
 	return 0;
 }
 
-void pmem_set_status( uintptr_t physical_addr, bool free )
+void pmem_free( uintptr_t physical_addr )
 {
-	int idx = physical_addr / PAGE_SIZE;
-	int& entry = s_pageframes[idx];
-
-	entry = free ? 0 : 1;
+	pmem_set_status( physical_addr, true );
 }
 
 void pmem_mark_used( uintptr_t physical_addr )
@@ -52,17 +57,14 @@ void pmem_mark_used( uintptr_t physical_addr )
 	pmem_set_status( physical_addr, false );
 }
 
-void pmem_mark_free( uintptr_t physical_addr, size_t size )
+
+
+static void pmem_mark_free( uintptr_t physical_addr, size_t size )
 {
 	for( unsigned int i = 0; i < size; i += PAGE_SIZE )
 	{
 		pmem_set_status( physical_addr + i, true );
 	}
-}
-
-void pmem_free( uintptr_t physical_addr )
-{
-	pmem_set_status( physical_addr, true );
 }
 
 void pmem_init( multiboot_info_t* mbt )

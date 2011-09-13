@@ -103,12 +103,6 @@ static_dtors_loop:
    
     hlt                          ; halt machine should kernel return
 
-
-[global kmap_virt_phys]
-kmap_virt_phys:
-	pop eax
-	sub eax, KERNEL_VIRTUAL_BASE
-	retn
 	
 [global idt_load]
 extern g_idtp

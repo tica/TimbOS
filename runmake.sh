@@ -1,3 +1,3 @@
 #!/bin/sh
 cd $(dirname "$0")
-make $1
+make -j $1

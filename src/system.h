@@ -17,9 +17,16 @@ struct regs
 };
 
 #ifdef __cplusplus
-extern "C"
+#define EXTERN_C		extern "C"
+#define EXTERN_C_BEGIN	extern "C" {
+#define EXTERN_C_END	}
+#else
+#define EXTERN_C 
+#define EXTERN_C_BEGIN
+#define EXTERN_C_END
 #endif
-void irq_install_handler(int irq, void (*handler)(struct regs *r));
+
+EXTERN_C void irq_install_handler(int irq, void (*handler)(struct regs *r));
 
 
 #endif // _SYSTEM_H_

@@ -92,6 +92,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
+    <None Include="runmake.cmd" />
+    <None Include="runmake.sh" />
+    <None Include="src\io.s" />
+    <None Include="src\irq.s" />
+    <None Include="src\isr.s" />
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
     <None Include="src\loader.s" />
@@ -104,7 +109,7 @@
     <ClCompile Include="src\format.c" />
     <ClCompile Include="src\gdt.c" />
     <ClCompile Include="src\idt.c" />
-    <ClCompile Include="src\irq.c" />
+    <ClCompile Include="src\irqs.c" />
     <ClCompile Include="src\isrs.c" />
     <ClCompile Include="src\kb.c" />
     <ClCompile Include="src\kernel.cpp" />
