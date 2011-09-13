@@ -1,5 +1,12 @@
 
 #include "system.h"
+#include "kb.h"
+
+#include "irq.h"
+
+#include "console.h"
+extern CONSOLE console;
+
 #include "debug.h"
 
 /* KBDUS means US Keyboard Layout. This is a scancode table
@@ -81,14 +88,14 @@ void keyboard_handler(struct regs *r)
         *  you would add 128 to the scancode when you look for it */
         debug_bochs_printf( "%c", kbdus[scancode] );
 
-		print_char( kbdus[scancode] );
+		console.printf( "%c", kbdus[scancode] );
     }
 }
 
 /* Installs the keyboard handler into IRQ1 */
-void keyboard_install( void )
+void keyboard::init( void )
 {
 	debug_bochs_printf( "keyboard_install..." );
-    irq_install_handler(1, keyboard_handler);
+    irq::install_handler(1, keyboard_handler);
 	debug_bochs_printf( "done\n" );
 }

@@ -16,6 +16,9 @@
     <Filter Include="core\mm">
       <UniqueIdentifier>{23e2f1b0-0b3d-4e57-adc2-d2b5691ca111}</UniqueIdentifier>
     </Filter>
+    <Filter Include="build">
+      <UniqueIdentifier>{1c47e5be-c7cb-4092-827a-06158f6f450f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -60,9 +63,14 @@
     <ClInclude Include="src\pmem.h">
       <Filter>core\mm</Filter>
     </ClInclude>
+    <ClInclude Include="src\irq.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kb.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Makefile" />
     <None Include="src\linker.ld">
       <Filter>setup</Filter>
     </None>
@@ -81,12 +89,19 @@
     <None Include="src\isr.s">
       <Filter>core</Filter>
     </None>
-    <None Include="src\irq.s">
+    <None Include="src\io.s">
       <Filter>core</Filter>
     </None>
-    <None Include="runmake.cmd" />
-    <None Include="runmake.sh" />
-    <None Include="src\io.s">
+    <None Include="Makefile">
+      <Filter>build</Filter>
+    </None>
+    <None Include="runmake.sh">
+      <Filter>build</Filter>
+    </None>
+    <None Include="runmake.cmd">
+      <Filter>build</Filter>
+    </None>
+    <None Include="src\irq_.s">
       <Filter>core</Filter>
     </None>
   </ItemGroup>
@@ -112,9 +127,6 @@
     <ClCompile Include="src\isrs.c">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\kb.c">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\kernel.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -130,7 +142,10 @@
     <ClCompile Include="src\pmem.cpp">
       <Filter>core\mm</Filter>
     </ClCompile>
-    <ClCompile Include="src\irqs.c">
+    <ClCompile Include="src\irq.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kb.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>

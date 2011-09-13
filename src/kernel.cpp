@@ -9,17 +9,15 @@
 #include "elf.h"
 #include "paging.h"
 #include "pmem.h"
+#include "irq.h"
+#include "kb.h"
 
 struct CONSOLE console;
 
 extern "C" void gdt_install( void );
 extern "C" void idt_install( void );
 extern "C" void isrs_install( void );
-extern "C" void irq_install( void );
-extern "C" void keyboard_install( void );
 extern "C" void test_test( void );
-
-extern "C" void irq_install_handler(int irq, void (*handler)(struct regs *r));
 
 void timer_handler(struct regs *r)
 {
@@ -68,9 +66,10 @@ extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 	gdt_install();
     idt_install();
     isrs_install();
-    irq_install();
-	keyboard_install();
-	irq_install_handler( 0, timer_handler );
+    irq::init();
+	keyboard::init();
+
+	irq::install_handler( 0, timer_handler );
 
 	multiboot_info_t* virtual_mbt = (multiboot_info_t*)KernelPageDirectory.physical_to_virtual( physical_multiboot_info );
 

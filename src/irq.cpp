@@ -1,43 +1,46 @@
 
 #include "system.h"
+#include "irq.h"
+
 #include "io.h"
 #include "debug.h"
 
 /* These are own ISRs that point to our special IRQ handler
 *  instead of the regular 'fault_handler' function */
-extern void irq0();
-extern void irq1();
-extern void irq2();
-extern void irq3();
-extern void irq4();
-extern void irq5();
-extern void irq6();
-extern void irq7();
-extern void irq8();
-extern void irq9();
-extern void irq10();
-extern void irq11();
-extern void irq12();
-extern void irq13();
-extern void irq14();
-extern void irq15();
+extern "C"
+{
+	extern void irq0();
+	extern void irq1();
+	extern void irq2();
+	extern void irq3();
+	extern void irq4();
+	extern void irq5();
+	extern void irq6();
+	extern void irq7();
+	extern void irq8();
+	extern void irq9();
+	extern void irq10();
+	extern void irq11();
+	extern void irq12();
+	extern void irq13();
+	extern void irq14();
+	extern void irq15();
+
+	extern void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);
+}
 
 /* This array is actually an array of function pointers. We use
 *  this to handle custom IRQ handlers for a given IRQ */
-void *irq_routines[16] =
-{
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-};
+static irq::handler_proc irq_routines[16] = {};
 
 /* This installs a custom IRQ handler for the given IRQ */
-void irq_install_handler(int irq, void (*handler)(struct regs *r))
+void irq::install_handler( int irq, handler_proc handler )
 {
     irq_routines[irq] = handler;
 }
 
 /* This clears the handler for a given IRQ */
-void irq_uninstall_handler(int irq)
+void irq_uninstall_handler( int irq )
 {
     irq_routines[irq] = 0;
 }
@@ -67,12 +70,10 @@ void irq_remap(void)
 	outportb(0x20, 0x20);
 }
 
-extern void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);
-
 /* We first remap the interrupt controllers, and then we install
 *  the appropriate ISRs to the correct entries in the IDT. This
 *  is just like installing the exception handlers */
-void irq_install()
+void irq::init()
 {
 	debug_bochs_printf( "irq_install... " );
 
@@ -111,7 +112,7 @@ void irq_install()
 *  interrupt at BOTH controllers, otherwise, you only send
 *  an EOI command to the first controller. If you don't send
 *  an EOI, you won't raise any more IRQs */
-void irq_handler( struct regs *r )
+extern "C" void irq_handler( struct regs *r )
 {
     /* This is a blank function pointer */
     void (*handler)(struct regs *r);

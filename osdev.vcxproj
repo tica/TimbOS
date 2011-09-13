@@ -81,6 +81,8 @@
     <ClInclude Include="src\elf.h" />
     <ClInclude Include="src\format.h" />
     <ClInclude Include="src\io.h" />
+    <ClInclude Include="src\irq.h" />
+    <ClInclude Include="src\kb.h" />
     <ClInclude Include="src\memory.h" />
     <ClInclude Include="src\multiboot.h" />
     <ClInclude Include="src\pagedir.h" />
@@ -95,7 +97,7 @@
     <None Include="runmake.cmd" />
     <None Include="runmake.sh" />
     <None Include="src\io.s" />
-    <None Include="src\irq.s" />
+    <None Include="src\irq_.s" />
     <None Include="src\isr.s" />
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
@@ -109,9 +111,9 @@
     <ClCompile Include="src\format.c" />
     <ClCompile Include="src\gdt.c" />
     <ClCompile Include="src\idt.c" />
-    <ClCompile Include="src\irqs.c" />
+    <ClCompile Include="src\irq.cpp" />
     <ClCompile Include="src\isrs.c" />
-    <ClCompile Include="src\kb.c" />
+    <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
     <ClCompile Include="src\memory.c" />
     <ClCompile Include="src\pagedir.cpp" />
