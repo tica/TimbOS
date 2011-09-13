@@ -4,12 +4,7 @@
 
 #include "system.h"
 
-#ifndef _MSC_VER
-#define ATTRIBUTE_PACKED__		__attribute__((packed))
-#define ATTRIBUTE_PAGEALIGN__	__attribute__((aligned(4096)))
-#endif
-
-struct ATTRIBUTE_PACKED__ page_dir_entry_t
+struct __ATTRIBUTE_PACKED__ page_dir_entry_t
 {
 	union
 	{

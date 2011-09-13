@@ -30,20 +30,13 @@ struct VIDEO_CHAR
 	unsigned char color;
 };
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+EXTERN_C_BEGIN
+	void video_print( struct VIDEO_CHAR* destination, const char* string, unsigned char color );
 
-void video_print( struct VIDEO_CHAR* destination, const char* string, unsigned char color );
+	void video_clear( struct VIDEO_CHAR* destination );
+	void video_display( const struct VIDEO_CHAR* screen );
 
-void video_clear( struct VIDEO_CHAR* destination );
-void video_display( const struct VIDEO_CHAR* screen );
-
-void video_scroll( size_t count );
-
-#ifdef __cplusplus
-}
-#endif
+	void video_scroll( size_t count );
+EXTERN_C_END
 
 #endif // _VIDEO_H_

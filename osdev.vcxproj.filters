@@ -19,6 +19,18 @@
     <Filter Include="build">
       <UniqueIdentifier>{1c47e5be-c7cb-4092-827a-06158f6f450f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\idt">
+      <UniqueIdentifier>{ae88a32a-ef51-4acd-8cf1-12bd1cec2225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\irq">
+      <UniqueIdentifier>{7de905c1-f1a8-45d0-98d7-8817edc28aee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\isr">
+      <UniqueIdentifier>{e731f076-8d21-455e-a1f9-2afa7a588ae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\io">
+      <UniqueIdentifier>{f49ef8ae-7221-490e-9326-4d07f1d1d898}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -34,9 +46,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="src\format.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\io.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="src\multiboot.h">
@@ -63,11 +72,20 @@
     <ClInclude Include="src\pmem.h">
       <Filter>core\mm</Filter>
     </ClInclude>
-    <ClInclude Include="src\irq.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="src\kb.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\idt.h">
+      <Filter>core\idt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\irq.h">
+      <Filter>core\irq</Filter>
+    </ClInclude>
+    <ClInclude Include="src\isr.h">
+      <Filter>core\isr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io.h">
+      <Filter>core\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,12 +104,6 @@
     <None Include="src\processor.s">
       <Filter>core</Filter>
     </None>
-    <None Include="src\isr.s">
-      <Filter>core</Filter>
-    </None>
-    <None Include="src\io.s">
-      <Filter>core</Filter>
-    </None>
     <None Include="Makefile">
       <Filter>build</Filter>
     </None>
@@ -101,8 +113,17 @@
     <None Include="runmake.cmd">
       <Filter>build</Filter>
     </None>
+    <None Include="src\idt_.s">
+      <Filter>core\idt</Filter>
+    </None>
     <None Include="src\irq_.s">
-      <Filter>core</Filter>
+      <Filter>core\irq</Filter>
+    </None>
+    <None Include="src\isr_.s">
+      <Filter>core\isr</Filter>
+    </None>
+    <None Include="src\io_.s">
+      <Filter>core\io</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -121,12 +142,6 @@
     <ClCompile Include="src\gdt.c">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\idt.c">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\isrs.c">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\kernel.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -142,11 +157,17 @@
     <ClCompile Include="src\pmem.cpp">
       <Filter>core\mm</Filter>
     </ClCompile>
-    <ClCompile Include="src\irq.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\kb.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\idt.cpp">
+      <Filter>core\idt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\irq.cpp">
+      <Filter>core\irq</Filter>
+    </ClCompile>
+    <ClCompile Include="src\isr.cpp">
+      <Filter>core\isr</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

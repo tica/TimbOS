@@ -2,6 +2,7 @@
 #include "system.h"
 #include "irq.h"
 
+#include "idt.h"
 #include "io.h"
 #include "debug.h"
 
@@ -9,24 +10,22 @@
 *  instead of the regular 'fault_handler' function */
 extern "C"
 {
-	extern void irq0();
-	extern void irq1();
-	extern void irq2();
-	extern void irq3();
-	extern void irq4();
-	extern void irq5();
-	extern void irq6();
-	extern void irq7();
-	extern void irq8();
-	extern void irq9();
-	extern void irq10();
-	extern void irq11();
-	extern void irq12();
-	extern void irq13();
-	extern void irq14();
-	extern void irq15();
-
-	extern void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);
+	void irq0();
+	void irq1();
+	void irq2();
+	void irq3();
+	void irq4();
+	void irq5();
+	void irq6();
+	void irq7();
+	void irq8();
+	void irq9();
+	void irq10();
+	void irq11();
+	void irq12();
+	void irq13();
+	void irq14();
+	void irq15();
 }
 
 /* This array is actually an array of function pointers. We use
@@ -40,7 +39,7 @@ void irq::install_handler( int irq, handler_proc handler )
 }
 
 /* This clears the handler for a given IRQ */
-void irq_uninstall_handler( int irq )
+void irq::uninstall_handler( int irq )
 {
     irq_routines[irq] = 0;
 }
@@ -81,23 +80,23 @@ void irq::init()
 
 	int sel = 0x08;
 
-    idt_set_gate(32, (unsigned)irq0, sel, 0x8E);
-    idt_set_gate(33, (unsigned)irq1, sel, 0x8E);
-    idt_set_gate(34, (unsigned)irq2, sel, 0x8E);
-    idt_set_gate(35, (unsigned)irq3, sel, 0x8E);
-    idt_set_gate(36, (unsigned)irq4, sel, 0x8E);
-    idt_set_gate(37, (unsigned)irq5, sel, 0x8E);
-    idt_set_gate(38, (unsigned)irq6, sel, 0x8E);
-    idt_set_gate(39, (unsigned)irq7, sel, 0x8E);
+    idt::set_gate(32, (unsigned)irq0, sel, 0x8E);
+    idt::set_gate(33, (unsigned)irq1, sel, 0x8E);
+    idt::set_gate(34, (unsigned)irq2, sel, 0x8E);
+    idt::set_gate(35, (unsigned)irq3, sel, 0x8E);
+    idt::set_gate(36, (unsigned)irq4, sel, 0x8E);
+    idt::set_gate(37, (unsigned)irq5, sel, 0x8E);
+    idt::set_gate(38, (unsigned)irq6, sel, 0x8E);
+    idt::set_gate(39, (unsigned)irq7, sel, 0x8E);
 
-    idt_set_gate(40, (unsigned)irq8, sel, 0x8E);
-    idt_set_gate(41, (unsigned)irq9, sel, 0x8E);
-    idt_set_gate(42, (unsigned)irq10, sel, 0x8E);
-    idt_set_gate(43, (unsigned)irq11, sel, 0x8E);
-    idt_set_gate(44, (unsigned)irq12, sel, 0x8E);
-    idt_set_gate(45, (unsigned)irq13, sel, 0x8E);
-    idt_set_gate(46, (unsigned)irq14, sel, 0x8E);
-    idt_set_gate(47, (unsigned)irq15, sel, 0x8E);
+    idt::set_gate(40, (unsigned)irq8, sel, 0x8E);
+    idt::set_gate(41, (unsigned)irq9, sel, 0x8E);
+    idt::set_gate(42, (unsigned)irq10, sel, 0x8E);
+    idt::set_gate(43, (unsigned)irq11, sel, 0x8E);
+    idt::set_gate(44, (unsigned)irq12, sel, 0x8E);
+    idt::set_gate(45, (unsigned)irq13, sel, 0x8E);
+    idt::set_gate(46, (unsigned)irq14, sel, 0x8E);
+    idt::set_gate(47, (unsigned)irq15, sel, 0x8E);
 
 	debug_bochs_printf( "done\n" );
 }

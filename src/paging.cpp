@@ -25,8 +25,8 @@ uintptr_t read_cr3()
 */
 
 
-struct page_table_entry_t ATTRIBUTE_PAGEALIGN__ test_page_table[0x400];
-struct page_table_entry_t ATTRIBUTE_PAGEALIGN__ kernel_page_table[0x400];
+struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ test_page_table[0x400];
+struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_page_table[0x400];
 
 void paging_init( void )
 {

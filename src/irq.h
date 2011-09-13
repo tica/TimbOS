@@ -8,8 +8,9 @@ namespace irq
 {
 	typedef void (*handler_proc)(struct regs*);
 
-	void init( void );
+	void init( void );	
 	void install_handler( int irq, handler_proc handler );
+	void uninstall_handler( int irq );
 }
 
 #endif

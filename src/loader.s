@@ -103,19 +103,7 @@ static_dtors_loop:
    
     hlt                          ; halt machine should kernel return
 
-	
-[global idt_load]
-extern g_idtp
-idt_load:
-    lidt [g_idtp]
-    ret
-    
-[global idt_store]
-extern g_idtp
-idt_store:
-    sidt [g_idtp]
-    ret
-    
+  
 [global set_pagedir]
 set_pagedir:
 	push eax

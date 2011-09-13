@@ -11,30 +11,23 @@
 #include "pmem.h"
 #include "irq.h"
 #include "kb.h"
+#include "idt.h"
+#include "isr.h"
 
 struct CONSOLE console;
 
 extern "C" void gdt_install( void );
-extern "C" void idt_install( void );
-extern "C" void isrs_install( void );
 extern "C" void test_test( void );
 
-void timer_handler(struct regs *r)
+void timer_handler(struct regs*)
 {
 	static int count;
-	r = r;
 
-	if( ++count == 100*3 )
+	if( ++count == 100 )
 	{
-		console.printf( "3 seconds\n" );
-		//debug_bochs_printf( "3 seconds\n" );
+		console.printf( "1" );
 		count = 0;
 	}
-}
-
-extern "C" void print_char( char ch )
-{
-	console.printf( "%c", ch );
 }
 
 
@@ -64,8 +57,8 @@ extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 	check_cpu();
 
 	gdt_install();
-    idt_install();
-    isrs_install();
+    idt::init();
+    isr::init();
     irq::init();
 	keyboard::init();
 

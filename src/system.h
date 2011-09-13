@@ -26,6 +26,11 @@ struct regs
 #define EXTERN_C_END
 #endif
 
+#ifndef _MSC_VER
+#define __ATTRIBUTE_PACKED__		__attribute__((packed))
+#define __ATTRIBUTE_PAGEALIGN__		__attribute__((aligned(4096)))
+#endif
+
 EXTERN_C void irq_install_handler(int irq, void (*handler)(struct regs *r));
 
 

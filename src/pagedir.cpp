@@ -71,7 +71,7 @@ uintptr_t PageDirectory::physical_to_virtual( uintptr_t addr ) const
 			{
 				if( pde->page_frame_addr == (addr >> 22) )
 				{
-					debug_bochs_printf( "ret = %d\n",  (i << 22) | (addr & 0x3FFFFF) );
+					//debug_bochs_printf( "ret = %d\n",  (i << 22) | (addr & 0x3FFFFF) );
 					return ((i << 22) | (addr & 0x3FFFFF));
 				}
 			}

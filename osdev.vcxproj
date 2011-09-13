@@ -80,8 +80,10 @@
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\elf.h" />
     <ClInclude Include="src\format.h" />
+    <ClInclude Include="src\idt.h" />
     <ClInclude Include="src\io.h" />
     <ClInclude Include="src\irq.h" />
+    <ClInclude Include="src\isr.h" />
     <ClInclude Include="src\kb.h" />
     <ClInclude Include="src\memory.h" />
     <ClInclude Include="src\multiboot.h" />
@@ -96,9 +98,10 @@
     <None Include="Makefile" />
     <None Include="runmake.cmd" />
     <None Include="runmake.sh" />
-    <None Include="src\io.s" />
+    <None Include="src\idt_.s" />
+    <None Include="src\io_.s" />
     <None Include="src\irq_.s" />
-    <None Include="src\isr.s" />
+    <None Include="src\isr_.s" />
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
     <None Include="src\loader.s" />
@@ -110,9 +113,9 @@
     <ClCompile Include="src\cppsupp.cpp" />
     <ClCompile Include="src\format.c" />
     <ClCompile Include="src\gdt.c" />
-    <ClCompile Include="src\idt.c" />
+    <ClCompile Include="src\idt.cpp" />
     <ClCompile Include="src\irq.cpp" />
-    <ClCompile Include="src\isrs.c" />
+    <ClCompile Include="src\isr.cpp" />
     <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
     <ClCompile Include="src\memory.c" />
