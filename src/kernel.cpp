@@ -13,6 +13,7 @@
 #include "kb.h"
 #include "idt.h"
 #include "isr.h"
+#include "kheap.h"
 
 struct CONSOLE console;
 
@@ -97,25 +98,25 @@ extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 	if( virtual_mbt->flags & (1 << 6) )
 	{
 		console.printf( "Found memory map...\n" );
-
-		virtual_mbt->mmap_addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->mmap_addr );
-		pmem_init( virtual_mbt );
+		virtual_mbt->mmap_addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->mmap_addr );		
 	}
 
 	if( virtual_mbt->flags & (1 << 5) )
 	{
-		virtual_mbt->u.elf_sec.addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->u.elf_sec.addr );
-
 		console.printf( "Found ELF section table @ %x, total entries = %d\n", virtual_mbt->u.elf_sec.addr, virtual_mbt->u.elf_sec.num );
-
-		paging_build_kernel_table( &virtual_mbt->u.elf_sec, 0xC0000000 );
+		virtual_mbt->u.elf_sec.addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->u.elf_sec.addr );
 	}
+
+	pmem_init( virtual_mbt );
+	paging_build_kernel_table( &virtual_mbt->u.elf_sec, 0xC0000000 );
 
 	debug_bochs_printf( "\n\nCrashing?\n\n" );
 	interrupts_enable();
 
 	paging_test();
 
+	kheap::init();
+	kheap::alloc( 1 );
 	console.printf( "idle" );
 
 	// stay!

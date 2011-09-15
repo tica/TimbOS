@@ -2,7 +2,25 @@
 #include "system.h"
 #include "pagedir.h"
 
+#include "paging.h"
 #include "debug.h"
+
+PageDirectory::PageDirectory()
+{
+	init();
+}
+
+void PageDirectory::init()
+{
+	uintptr_t physical_address = KernelPageDirectory.virtual_to_physical( this );
+
+	// Map the page directory (acting as a page table!) to the last page directory entry, to allow access
+	// to the page tables through virtual addresses
+	KernelPageDirectory[0x3FF].present = 1;
+	KernelPageDirectory[0x3FF].writable = 1;
+	KernelPageDirectory[0x3FF].enable4m = 0;
+	KernelPageDirectory[0x3FF].page_table_addr = physical_address >> 12;
+}
 
 uintptr_t PageDirectory::virtual_to_physical( uintptr_t addr ) const
 {
@@ -100,4 +118,20 @@ uintptr_t PageDirectory::physical_to_virtual( uintptr_t addr ) const
 	
 	debug_bochs_printf( "physical_to_virtual FAILED! (%x not mapped)\n", addr );
 	return 0;
+}
+
+void PageDirectory::map_page( uintptr_t physical_addr, uintptr_t virtual_addr, int flags )
+{
+	TRACE3( physical_addr, virtual_addr, flags );
+
+    if( physical_addr & 0xFFF )
+	{
+		debug_bochs_printf( "map_page: physical_addr not page-aligned (%x)\n", physical_addr );
+		return;
+	}
+	if( virtual_addr & 0xFFF )
+	{
+		debug_bochs_printf( "map_page: physical_addr not page-aligned (%x)\n", virtual_addr );
+		return;
+	}
 }

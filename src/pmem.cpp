@@ -2,7 +2,11 @@
 #include "system.h"
 #include "pmem.h"
 
+#include "paging.h"
 #include "multiboot.h"
+
+#include "elf.h"
+
 #include "debug.h"
 #include "console.h"
 extern CONSOLE console;
@@ -111,4 +115,52 @@ void pmem_init( multiboot_info_t* mbt )
 	{
 		debug_bochs_printf( "physmem_init_from_mbt: NO MEMORY FOUND!\n" );
 	}
+
+	if( mbt->flags & (1 << 5) )
+	{
+		const elf_section_header_table& esht = mbt->u.elf_sec;
+
+		/*
+		debug_bochs_printf( "mbt->u.elf_sec.addr = %x\n", esht.addr );
+		debug_bochs_printf( "mbt->u.elf_sec.num = %x\n", esht.num );
+		debug_bochs_printf( "mbt->u.elf_sec.shndx = %x\n", esht.shndx );
+		debug_bochs_printf( "mbt->u.elf_sec.size = %x\n", esht.size );
+		*/
+
+		Elf32_Shdr* esh = (Elf32_Shdr*)esht.addr;
+
+		for( size_t i = 0; i < esht.num; ++i )
+		{
+			if( esh->sh_flags & SHF_ALLOC )
+			{
+				/*
+				console.printf( "ELF section: addr=%x size=%x writable=%s executable=%s\n",
+					esh->sh_addr, esh->sh_size, esh->sh_flags & SHF_WRITE ? "yes" : "no",
+					esh->sh_flags & SHF_EXECINSTR ? "yes" : "no" );
+				*/
+
+				size_t size = esh->sh_size;
+				int pgindex = (esh->sh_addr >> 12) & 0x3FF;
+				uintptr_t virtual_addr = esh->sh_addr;
+
+				while( size > 0 )
+				{
+					uintptr_t physical_address = KernelPageDirectory.virtual_to_physical( virtual_addr );
+					pmem_mark_used( physical_address );
+
+					pgindex++;
+
+					unsigned int page_step = 0x1000 - (virtual_addr % 0x1000);
+					if( page_step > size ) page_step = size;
+
+					virtual_addr += page_step;
+					size -= page_step;
+				}
+			}
+			esh++;
+		}
+	}
+
+	// Do not let 0x00000000 be a valid address
+	pmem_mark_used( 0 );
 }

@@ -142,7 +142,7 @@ const char* exception_messages[] =
     "Reserved"
 };
 
-extern "C" void paging_handle_fault( struct regs* r, uintptr_t virtual_address );
+extern "C" bool paging_handle_fault( struct regs* r, uintptr_t virtual_address );
 
 /* All of our Exception handling Interrupt Service Routines will
 *  point to this function. This will tell us what exception has
@@ -152,19 +152,24 @@ extern "C" void paging_handle_fault( struct regs* r, uintptr_t virtual_address )
 *  happening and messing up kernel data structures */
 extern "C" void fault_handler(struct regs *r)
 {
-    if (r->int_no < 32)
+	if (r->int_no < 32)
     {
-		debug_bochs_printf( "EXCEPTION!" );
-		debug_bochs_printf( " (%x)", r->int_no );
-        debug_bochs_printf( exception_messages[r->int_no] );
-        debug_bochs_printf( " Exception. System Halted!\n" );
+		bool handled = false;		
 
-		if( r->int_no == 14 )
+		switch( r->int_no )
 		{
-			debug_bochs_printf( "page fault @ %x\n", read_cr2() );
-			paging_handle_fault( r, read_cr2() );
-		}		
+		case 14: // Page fault			
+			handled = paging_handle_fault( r, read_cr2() );
+			break;
+		default:
+			debug_bochs_printf( "EXCEPTION!" );
+			debug_bochs_printf( " (%x)\n", r->int_no );
+			debug_bochs_printf( exception_messages[r->int_no] );
+			debug_bochs_printf( " Exception. System Halted!\n" );
+			break;
+		}
 
-        for (;;);
+		if( !handled )
+			for (;;);
     }
 }

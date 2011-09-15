@@ -28,19 +28,15 @@ uintptr_t read_cr3()
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ test_page_table[0x400];
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_page_table[0x400];
 
+struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_heap_page_tables[0x400][0x10];
+
 void paging_init( void )
 {
 	TRACE();
 
-	debug_bochs_printf( "sizeof(page_dir_entry_t) = %x\n", sizeof(page_dir_entry_t) );
-	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", KernelPageDirectory, read_cr3() );
+	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", &KernelPageDirectory, read_cr3() );
 
-	// Map the page directory (acting as a page table!) to the last page directory entry, to allow access
-	// to the page tables through virtual addresses
-	KernelPageDirectory[0x3FF].present = 1;
-	KernelPageDirectory[0x3FF].writable = 1;
-	KernelPageDirectory[0x3FF].enable4m = 0;
-	KernelPageDirectory[0x3FF].page_table_addr = read_cr3() >> 12;
+	KernelPageDirectory.init();
 }
 
 extern CONSOLE console;
@@ -205,20 +201,65 @@ void paging_test( void )
 	debug_bochs_printf( "*q = %x\n", *q );	
 }
 
-extern "C" void paging_handle_fault( struct regs* r, uintptr_t virtual_address )
+extern "C" bool paging_handle_fault( struct regs* r, uintptr_t virtual_address )
 {
-	debug_bochs_printf( "error code = %x, v_addr = %x\n", r->err_code, virtual_address );
+	bool protection_violation = r->err_code & 0x1;
+	//bool access_write = r->err_code & 0x2;
+	//bool user_mode = r->err_code & 0x4;
+	bool reserved_violation = r->err_code & 0x8;
 
-	switch( r->err_code )
+	if( reserved_violation )
 	{
-	case 0: // KERNEL, READ, NOT_PRESENT
-		r->err_code = 0;
-		break;
-	case 2: // KERNEL, WRITE, NOT_PRESENT:
-		debug_bochs_printf( "Kernel tried to write to non-present page @ %x\n", virtual_address );
-		break;
-	default:
-		debug_bochs_printf( "paging_handle_fault: no idea what to do!\n" );
-		break;
+		debug_bochs_printf( "page fault @ %x: reserved_violation!\n", virtual_address );
 	}
+	else if( protection_violation )
+	{
+		debug_bochs_printf( "page fault @ %x: protection_violation!\n", virtual_address );
+	}
+	else // non-present page
+	{
+		unsigned int pd_index = virtual_address >> 22;
+		unsigned int pt_index = (virtual_address >> 12) & 0x3FF;
+
+		auto& pde = KernelPageDirectory[pd_index];
+		if( pde.present )
+		{
+			//debug_bochs_printf( "Page directory entry %x is present...\n", pd_index );
+
+			if( !pde.enable4m )
+			{
+				page_table_entry_t* pte = (page_table_entry_t*)(0xFFC00000 | (pd_index << 12) | (pt_index << 2));
+
+				//debug_bochs_printf( "checking pte @ %x phy %x virt...\n", KernelPageDirectory.virtual_to_physical( pte ), pte );
+				
+				if( pte->reserved_flag ) // Memory has been 'reserved' => auto-alloc physical
+				{
+					uintptr_t phys_addr = pmem_alloc();
+					debug_bochs_printf( "paging_handle_fault: page was reserved, allocated new phys page @ %x\n", phys_addr );
+
+					pte->page_addr = phys_addr >> 12;					
+					pte->reserved_flag = 0;
+					pte->present = 1;
+
+					//debug_bochs_printf( "*pte = %x\n", *pte );
+
+					return true;
+				}
+				else
+				{
+					debug_bochs_printf( "page fault @ %x: page not present!\n", virtual_address );
+				}
+			}
+			else
+			{
+				debug_bochs_printf( "page fault @ %x: 4M pages not supported!\n", virtual_address );
+			}
+		}
+		else
+		{
+			debug_bochs_printf( "page fault @ %x: Page directory entry 0x%x is NOT present...\n", virtual_address, pd_index );
+		}
+	}
+
+	return false;
 }

@@ -93,6 +93,7 @@
     <ClInclude Include="src\processor.h" />
     <ClInclude Include="src\system.h" />
     <ClInclude Include="src\video.h" />
+    <ClInclude Include="src\kheap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -123,6 +124,7 @@
     <ClCompile Include="src\paging.cpp" />
     <ClCompile Include="src\pmem.cpp" />
     <ClCompile Include="src\video.c" />
+    <ClCompile Include="src\kheap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

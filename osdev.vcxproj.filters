@@ -31,6 +31,9 @@
     <Filter Include="core\io">
       <UniqueIdentifier>{f49ef8ae-7221-490e-9326-4d07f1d1d898}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{e43ba345-a31d-4628-afa6-4c8f38541014}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -42,13 +45,7 @@
     <ClInclude Include="src\debug.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\elf.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="src\format.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\multiboot.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="src\processor.h">
@@ -86,6 +83,15 @@
     </ClInclude>
     <ClInclude Include="src\io.h">
       <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiboot.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\elf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kheap.h">
+      <Filter>core\mm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +139,6 @@
     <ClCompile Include="src\console.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\cppsupp.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\format.c">
       <Filter>core</Filter>
     </ClCompile>
@@ -168,6 +171,12 @@
     </ClCompile>
     <ClCompile Include="src\isr.cpp">
       <Filter>core\isr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cppsupp.cpp">
+      <Filter>setup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kheap.cpp">
+      <Filter>core\mm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

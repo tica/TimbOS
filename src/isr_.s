@@ -59,13 +59,13 @@ extern fault_handler
 ; up for kernel mode segments, calls the C-level fault handler,
 ; and finally restores the stack frame.
 isr_common_stub:
-	push eax
-	push edx
-	mov al, 0x41
-	mov dx, 0xe9
-	out dx, al
-	pop eax
-	pop edx
+;	push eax
+;	push edx
+;	mov al, 0x41 ;; output 'A'
+;	mov dx, 0xe9
+;	out dx, al	
+;	pop edx
+;	pop eax
 	
     pushad
     push ds
