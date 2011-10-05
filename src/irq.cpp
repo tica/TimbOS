@@ -111,17 +111,14 @@ void irq::init()
 *  interrupt at BOTH controllers, otherwise, you only send
 *  an EOI command to the first controller. If you don't send
 *  an EOI, you won't raise any more IRQs */
-extern "C" void irq_handler( struct regs *r )
+extern "C" struct cpu_state* irq_handler( struct cpu_state *r )
 {
-    /* This is a blank function pointer */
-    void (*handler)(struct regs *r);
-
     /* Find out if we have a custom handler to run for this
     *  IRQ, and then finally, run it */
-    handler = irq_routines[r->int_no - 32];
+    irq::handler_proc handler = irq_routines[r->int_no - 32];
     if (handler)
     {
-        handler(r);
+        r = handler(r);
     }
 	else
 	{
@@ -139,4 +136,6 @@ extern "C" void irq_handler( struct regs *r )
     /* In either case, we need to send an EOI to the master
     *  interrupt controller too */
     outportb(0x20, 0x20);
+
+	return r;
 }

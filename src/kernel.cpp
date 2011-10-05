@@ -13,22 +13,33 @@
 #include "kb.h"
 #include "idt.h"
 #include "isr.h"
-#include "kheap.h"
 
 struct CONSOLE console;
 
 extern "C" void gdt_install( void );
-extern "C" void test_test( void );
 
-void timer_handler(struct regs*)
+const unsigned int TASK_COUNT = 2;
+static struct cpu_state* s_tasks[TASK_COUNT] = {};
+static unsigned int s_current_task = (unsigned)-1;
+
+struct cpu_state* timer_handler(struct cpu_state* regs)
 {
+	/*
 	static int count;
-
 	if( ++count == 100 )
 	{
 		console.printf( "1" );
 		count = 0;
+	}*/
+
+	if( s_current_task < TASK_COUNT )
+	{
+		s_tasks[s_current_task] = regs;
 	}
+
+	s_current_task = (s_current_task + 1) % TASK_COUNT;
+
+	return s_tasks[s_current_task];
 }
 
 
@@ -45,6 +56,48 @@ void check_cpu(void)
     console.printf("\n");
 }
 
+void taskA( void )
+{
+	static int a_skip = 0;
+
+	while( true )
+		if( ++a_skip == 1000 )
+		{
+			a_skip = 0;
+			console.printf( "A" );
+		}
+}
+
+void taskB( void )
+{
+	static int b_skip = 0;
+
+	while( true )
+		if( ++b_skip == 1000 )
+		{
+			b_skip = 0;
+			console.printf( "B" );
+		}
+}
+
+struct cpu_state* init_task( void* stack, void* entry )
+{
+	struct cpu_state* regs = reinterpret_cast<struct cpu_state*>( ((uint8_t*)stack) + 4096 - sizeof(struct cpu_state) );
+	memset( regs, 0, sizeof(regs) );
+
+	regs->eip = (unsigned int)entry;
+	regs->cs = 0x08;
+	regs->ds = 0x10;
+	regs->es = 0x10;
+	regs->fs = 0x10;
+	regs->gs = 0x10;
+	regs->eflags = 0x0202;
+
+	return regs;
+}
+
+static uint8_t __ATTRIBUTE_PAGEALIGN__ stackA[4096];
+static uint8_t __ATTRIBUTE_PAGEALIGN__ stackB[4096];
 
 extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 {
@@ -61,9 +114,7 @@ extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
     idt::init();
     isr::init();
     irq::init();
-	keyboard::init();
-
-	irq::install_handler( 0, timer_handler );
+	keyboard::init();	
 
 	multiboot_info_t* virtual_mbt = (multiboot_info_t*)KernelPageDirectory.physical_to_virtual( physical_multiboot_info );
 
@@ -115,9 +166,11 @@ extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
 
 	paging_test();
 
-	kheap::init();
-	kheap::alloc( 1 );
-	console.printf( "idle" );
+	console.printf( "idle\n" );
+
+	s_tasks[0] = init_task( stackA, (void*)taskA );
+	s_tasks[1] = init_task( stackB, (void*)taskB );
+	irq::install_handler( 0, timer_handler );
 
 	// stay!
 	while( 1 )

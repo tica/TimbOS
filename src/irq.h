@@ -6,7 +6,7 @@
 
 namespace irq
 {
-	typedef void (*handler_proc)(struct regs*);
+	typedef struct cpu_state* (*handler_proc)(struct cpu_state*);
 
 	void init( void );	
 	void install_handler( int irq, handler_proc handler );

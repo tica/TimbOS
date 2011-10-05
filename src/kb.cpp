@@ -57,7 +57,7 @@ unsigned char kbdus[128] =
 extern void print_char( char ch );
 
 /* Handles the keyboard interrupt */
-void keyboard_handler(struct regs *r)
+struct cpu_state* keyboard_handler(struct cpu_state *r)
 {
     unsigned char scancode;
 	r = r;
@@ -90,6 +90,8 @@ void keyboard_handler(struct regs *r)
 
 		console.printf( "%c", kbdus[scancode] );
     }
+
+	return r;
 }
 
 /* Installs the keyboard handler into IRQ1 */

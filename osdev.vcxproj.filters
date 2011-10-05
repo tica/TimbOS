@@ -133,9 +133,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\video.c">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\console.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -177,6 +174,9 @@
     </ClCompile>
     <ClCompile Include="src\kheap.cpp">
       <Filter>core\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

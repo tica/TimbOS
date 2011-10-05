@@ -39,12 +39,11 @@ irq_common_stub:
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov eax, esp
 
-    push eax
-    mov eax, irq_handler
-    call eax
-    pop eax
+	; esp = irq_handler( esp );
+    push esp
+    call irq_handler
+    mov esp, eax
 
     pop gs
     pop fs

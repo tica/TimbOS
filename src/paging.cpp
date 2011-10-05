@@ -58,9 +58,11 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 	{
 		if( esh->sh_flags & SHF_ALLOC )
 		{
+			/*
 			console.printf( "ELF section: addr=%x size=%x writable=%s executable=%s\n",
 				esh->sh_addr, esh->sh_size, esh->sh_flags & SHF_WRITE ? "yes" : "no",
 				esh->sh_flags & SHF_EXECINSTR ? "yes" : "no" );
+				*/
 
 			size_t size = esh->sh_size;
 			int pgindex = (esh->sh_addr >> 12) & 0x3FF;
@@ -201,7 +203,7 @@ void paging_test( void )
 	debug_bochs_printf( "*q = %x\n", *q );	
 }
 
-extern "C" bool paging_handle_fault( struct regs* r, uintptr_t virtual_address )
+extern "C" bool paging_handle_fault( struct cpu_state* r, uintptr_t virtual_address )
 {
 	bool protection_violation = r->err_code & 0x1;
 	//bool access_write = r->err_code & 0x2;

@@ -142,7 +142,7 @@ const char* exception_messages[] =
     "Reserved"
 };
 
-extern "C" bool paging_handle_fault( struct regs* r, uintptr_t virtual_address );
+extern "C" bool paging_handle_fault( struct cpu_state* r, uintptr_t virtual_address );
 
 /* All of our Exception handling Interrupt Service Routines will
 *  point to this function. This will tell us what exception has
@@ -150,7 +150,7 @@ extern "C" bool paging_handle_fault( struct regs* r, uintptr_t virtual_address )
 *  endless loop. All ISRs disable interrupts while they are being
 *  serviced as a 'locking' mechanism to prevent an IRQ from
 *  happening and messing up kernel data structures */
-extern "C" void fault_handler(struct regs *r)
+extern "C" void fault_handler(struct cpu_state *r)
 {
 	if (r->int_no < 32)
     {
@@ -164,8 +164,22 @@ extern "C" void fault_handler(struct regs *r)
 		default:
 			debug_bochs_printf( "EXCEPTION!" );
 			debug_bochs_printf( " (%x)\n", r->int_no );
-			debug_bochs_printf( exception_messages[r->int_no] );
-			debug_bochs_printf( " Exception. System Halted!\n" );
+			debug_bochs_printf( "%s Exception\n", exception_messages[r->int_no] );
+
+			debug_bochs_printf( "\nRegister dump:\n" );
+
+			/*
+    unsigned int gs, fs, es, ds;
+    unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    unsigned int int_no, err_code;
+    unsigned int eip, cs, eflags, useresp, ss;
+	*/
+			debug_bochs_printf( "EAX = %x EBX = %x ECX = %x EDX = %x\n", r->eax, r->ebx, r->ecx, r->edx );
+			debug_bochs_printf( "ESP = %x EBP = %x ESI = %x EDI = %x\n", r->esp, r->ebp, r->esi, r->edi );
+			debug_bochs_printf( "GS  = %x FS  = %x ES  = %x DS  = %x\n", r->gs, r->fs, r->es, r->ds );
+			debug_bochs_printf( "EIP = %x CS  = %x EFLAGS = %x SS = %x\n", r->eip, r->cs, r->eflags, r->ss );
+
+			debug_bochs_printf( "System Halted!\n" );
 			break;
 		}
 
