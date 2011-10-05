@@ -24,6 +24,9 @@ public:
 	CONSOLE();
 public:
 	void printf( const char* format, ... );
+
+private:
+	void move_cursor( int x, int y );
 };
 
 #endif // _CONSOLE_H_

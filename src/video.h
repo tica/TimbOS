@@ -37,6 +37,9 @@ EXTERN_C_BEGIN
 	void video_display( const struct VIDEO_CHAR* screen );
 
 	void video_scroll( size_t count );
+
+	void video_move_cursor( unsigned int col, unsigned int row );
+	void video_config_cursor( bool blink, unsigned int start_row, unsigned int end_row );
 EXTERN_C_END
 
 #endif // _VIDEO_H_
