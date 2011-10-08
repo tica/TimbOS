@@ -5,6 +5,7 @@
 #include "idt.h"
 #include "io.h"
 #include "debug.h"
+#include "gdt.h"
 
 /* These are own ISRs that point to our special IRQ handler
 *  instead of the regular 'fault_handler' function */
@@ -135,7 +136,7 @@ extern "C" struct cpu_state* irq_handler( struct cpu_state *r )
 
     /* In either case, we need to send an EOI to the master
     *  interrupt controller too */
-    outportb(0x20, 0x20);
+    outportb(0x20, 0x20);	
 
 	return r;
 }

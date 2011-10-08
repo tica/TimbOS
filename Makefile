@@ -61,6 +61,7 @@ $(KERNEL-BIN): $(LINKER-LD) $(ASM-OBJECTS) $(C-OBJECTS) $(CXX-OBJECTS) Makefile
 	@echo "[ld]    $@ <= (linker.ld $(ASM-OBJECTS) $(C-OBJECTS) $(CXX-OBJECTS))"
 	@mkdir -p $(BIN-DIR)
 	@$(TOOLS-PREFIX)ld -T $(LINKER-LD) -o $(KERNEL-BIN) $(ASM-OBJECTS) $(C-OBJECTS) $(CXX-OBJECTS)
+	@$(TOOLS-PREFIX)objdump -S $(KERNEL-BIN) > objdump.txt
 
 $(FLOPPY-1440k-IMG): $(KERNEL-BIN) build/template.img Makefile
 	@echo "[create-image]	$@ <= ($<)"

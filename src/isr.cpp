@@ -163,9 +163,13 @@ extern "C" void fault_handler(struct cpu_state *r)
 			break;
 		default:
 			debug_bochs_printf( "EXCEPTION!" );
-			debug_bochs_printf( " (%x)\n", r->int_no );
+			debug_bochs_printf( " (%x) (err_code = %x)\n", r->int_no, r->err_code );	
 			debug_bochs_printf( "%s Exception\n", exception_messages[r->int_no] );
+			break;
+		}
 
+		if( !handled )
+		{
 			debug_bochs_printf( "\nRegister dump:\n" );
 
 			/*
@@ -180,10 +184,9 @@ extern "C" void fault_handler(struct cpu_state *r)
 			debug_bochs_printf( "EIP = %x CS  = %x EFLAGS = %x SS = %x\n", r->eip, r->cs, r->eflags, r->ss );
 
 			debug_bochs_printf( "System Halted!\n" );
-			break;
-		}
 
-		if( !handled )
+
 			for (;;);
+		}
     }
 }

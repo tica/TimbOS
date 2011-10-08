@@ -76,7 +76,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 				page_table_entry_t* pte = &kernel_page_table[pgindex];
 				pte->page_addr = physical_address >> 12;
 				pte->present = 1;
-				pte->user = 0;
+				pte->user = 1; // HACK!
 				pte->writable = esh->sh_flags & SHF_WRITE ? 1 : 0;
 
 				//debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, physical_address, pgindex );
@@ -97,6 +97,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 	page_table_entry_t* pte = &kernel_page_table[0x0B8];
 	pte->writable = 1;
 	pte->present = 1;
+	pte->user = 1; // HACK
 	pte->page_addr = 0x0B8;
 
 	// Map multiboot hdr
@@ -109,6 +110,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 	pde.writable = 1;
 	pde.present = 1;
 	pde.enable4m = 0;
+	pde.user = 1; // HACK
 	pde.page_table_addr = (uintptr_t)KernelPageDirectory.virtual_to_physical( kernel_page_table ) >> 12;
 
 	KernelPageDirectory[kernel_base >> 22] = pde;

@@ -5,6 +5,8 @@
 
 void* memcpy( void* destination, const void* source, size_t count )
 {
+	//debug_bochs_printf( "memcpy from %x to %x (%x bytes)\n", source, destination, count );
+
 	unsigned char* dest = destination;
 	const unsigned char* src = source;
 	

@@ -7,3 +7,4 @@ obj
 *.img
 bin
 *.log
+objdump.txt

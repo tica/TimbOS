@@ -93,6 +93,12 @@
     <ClInclude Include="src\kheap.h">
       <Filter>core\mm</Filter>
     </ClInclude>
+    <ClInclude Include="src\scheduler.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gdt.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\linker.ld">
@@ -139,9 +145,6 @@
     <ClCompile Include="src\format.c">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\gdt.c">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="src\kernel.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -176,6 +179,15 @@
       <Filter>core\mm</Filter>
     </ClCompile>
     <ClCompile Include="src\video.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scheduler.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gdt_.s">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gdt.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>

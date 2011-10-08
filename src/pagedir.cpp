@@ -19,6 +19,7 @@ void PageDirectory::init()
 	KernelPageDirectory[0x3FF].present = 1;
 	KernelPageDirectory[0x3FF].writable = 1;
 	KernelPageDirectory[0x3FF].enable4m = 0;
+	KernelPageDirectory[0x3FF].user = 1; // HACK
 	KernelPageDirectory[0x3FF].page_table_addr = physical_address >> 12;
 }
 
