@@ -25,12 +25,12 @@ void format_number( output_func_t output, void* ptr, unsigned int number )
 	output( digit_chars[digit], ptr );
 }
 
-void format_number_hex( output_func_t output, void* ptr, unsigned int number )
+void format_number_hex( output_func_t output, void* ptr, unsigned int number, int width )
 {
-	format_chars( output, ptr, "0x" );
+	//format_chars( output, ptr, "0x" );
 	char digit_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-	unsigned int shift = 32;
+	unsigned int shift = width > 0 ? width * 4 : 32;
 	do
 	{
 		shift -= 4;
@@ -38,6 +38,11 @@ void format_number_hex( output_func_t output, void* ptr, unsigned int number )
 		output( digit_chars[digit], ptr );
 	}
 	while( shift != 0 );
+}
+
+int isdigit( char ch )
+{
+	return ch >= '0' && ch <= '9';
 }
   
 void format_string_varg( output_func_t output, void* ptr, const char* format, va_list ap )
@@ -47,6 +52,12 @@ void format_string_varg( output_func_t output, void* ptr, const char* format, va
 		if( *format == '%' )
 		{
 			format++;
+
+			int width = 0;
+			if( isdigit( *format ) )
+			{
+				width = (*format++ - '0');
+			}
 			
 			switch( *format )
 			{
@@ -58,7 +69,7 @@ void format_string_varg( output_func_t output, void* ptr, const char* format, va
 				break;
 			case 'x':
 			case 'p':
-				format_number_hex( output, ptr, va_arg( ap, unsigned int ) );
+				format_number_hex( output, ptr, va_arg( ap, unsigned int ), width );
 				break;
 			case 'c':
 				output( va_arg( ap, char ), ptr );

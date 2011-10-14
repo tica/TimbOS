@@ -5,13 +5,9 @@
 #include "io.h"
 #include "format.h"
 
-#define bochs_console_putc(c) outportb( 0xe9, c )
 
-static inline void output_bochs_char( char ch, void* p )
-{
-	p = p;
-	bochs_console_putc( ch );
-}
+void output_bochs_char( char ch, void* p );
+void debug_bochs_memdump( void* addr, unsigned int length );
 
 #define debug_bochs_printf( ... ) format_string( output_bochs_char, 0, __VA_ARGS__ )
 
@@ -19,5 +15,8 @@ static inline void output_bochs_char( char ch, void* p )
 #define TRACE1( p ) debug_bochs_printf( "%s( %s=%p )\n", __FUNCTION__, #p, p )
 #define TRACE2( p, q ) debug_bochs_printf( "%s( %s=%p, %s=%p )\n", __FUNCTION__, #p, p, #q, q )
 #define TRACE3( p, q, r ) debug_bochs_printf( "%s( %s=%p, %s=%p, %s=%p )\n", __FUNCTION__, #p, p, #q, q, #r, r )
+#define DUMP( addr, len ) debug_bochs_memdump( addr, len )
+#define DUMP_OBJ( obj ) debug_bochs_memdump( &(obj), sizeof(obj) )
+#define PANIC( txt ) do { debug_bochs_printf( "PANIC (%s): %s\n", __FUNCTION__, txt ); for(;;); } while(0)
 
 #endif // _DEBUG_H_

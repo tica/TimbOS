@@ -110,10 +110,13 @@
     <None Include="src\loader.s" />
     <None Include="src\loader.low" />
     <None Include="src\processor.s" />
+    <None Include="start.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\cppsupp.cpp" />
+    <ClCompile Include="src\debug.cpp" />
+    <ClCompile Include="src\floppy.cpp" />
     <ClCompile Include="src\format.c" />
     <ClCompile Include="src\gdt.cpp" />
     <ClCompile Include="src\gdt_.s" />

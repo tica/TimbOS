@@ -137,6 +137,9 @@
     <None Include="src\io_.s">
       <Filter>core\io</Filter>
     </None>
+    <None Include="start.bat">
+      <Filter>build</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
@@ -188,6 +191,12 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\gdt.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\floppy.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>

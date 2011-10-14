@@ -27,6 +27,7 @@ uintptr_t read_cr3()
 
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ test_page_table[0x400];
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_page_table[0x400];
+struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ null_page_table[0x400];
 
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_heap_page_tables[0x400][0x10];
 
@@ -37,6 +38,24 @@ void paging_init( void )
 	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", &KernelPageDirectory, read_cr3() );
 
 	KernelPageDirectory.init();
+
+	for( int i = 0; i < 16; ++i )
+	{
+		auto pte = &null_page_table[8 + i];
+		pte->writable = 1;
+		pte->present = 1;
+		pte->user = 1; // HACK
+		pte->page_addr = 8 + i;
+	}
+
+	struct page_dir_entry_t pde;
+	pde.writable = 1;
+	pde.present = 1;
+	pde.enable4m = 0;
+	pde.user = 1; // HACK
+	pde.page_table_addr = (uintptr_t)KernelPageDirectory.virtual_to_physical( null_page_table ) >> 12;
+
+	KernelPageDirectory[0] = pde;
 }
 
 extern CONSOLE console;
@@ -71,7 +90,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 			while( size > 0 )
 			{
 				uintptr_t physical_address = KernelPageDirectory.virtual_to_physical( virtual_addr );
-				pmem_mark_used( physical_address );
+				pmem_reserve( physical_address );
 
 				page_table_entry_t* pte = &kernel_page_table[pgindex];
 				pte->page_addr = physical_address >> 12;
@@ -202,7 +221,17 @@ void paging_test( void )
 	debug_bochs_printf( "*p = %x\n", *p );
 	*p = 0x12345678;
 	debug_bochs_printf( "*p = %x\n", *p );
-	debug_bochs_printf( "*q = %x\n", *q );	
+	debug_bochs_printf( "*q = %x\n", *q );
+
+	debug_bochs_printf( "writing 0x8000...\n" );
+	p = (int*)0x8000;
+	for( int i = 0; i < 10000; ++i )
+	{
+		p[i] = i;
+	}
+	debug_bochs_printf( "OK\n" );
+
+	DUMP( (void*)0x8000, 0x100 );
 }
 
 extern "C" bool paging_handle_fault( struct cpu_state* r, uintptr_t virtual_address )
