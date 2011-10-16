@@ -19,12 +19,6 @@ void irq_wait( int )
 {
 }
 
-void panic( const char* txt )
-{
-	console.printf( txt );
-	for( ;; );
-}
-
 // standard base address of the primary floppy controller
 static const int floppy_base = 0x03f0;
 // standard IRQ number for floppy controllers

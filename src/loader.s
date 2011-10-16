@@ -65,8 +65,9 @@ _loader:
 StartInHigherHalf:
     ; Unmap the identity-mapped first 4MB of physical address space. It should not be needed
     ; anymore.
-    mov dword [KernelPageDirectory], 0
-    invlpg [0]
+	; -- keep it for multiboot info while booting
+    ; mov dword [KernelPageDirectory], 0
+    ; invlpg [0]
 
     ; NOTE: From now on, paging should be enabled. The first 4MB of physical address space is
     ; mapped starting at KERNEL_VIRTUAL_BASE. Everything is linked to this address, so no more

@@ -1,13 +1,15 @@
 
+#include "system.h"
 #include "debug.h"
 
+#include "format.h"
 #include "io.h"
+#include "processor.h"
 
 #define bochs_console_putc(c) outportb( 0xe9, c )
 
-void output_bochs_char( char ch, void* p )
+void output_bochs_char( char ch, void* )
 {
-	p = p;
 	bochs_console_putc( ch );
 }
 
@@ -16,7 +18,7 @@ bool isprintable( char ch )
 	return ch >= 0x20 && ch <= 0x7E;
 }
 
-void debug_bochs_memdump( void* address, unsigned int length )
+void debug_bochs_memdump( const void* address, unsigned int length )
 {
 	unsigned char* begin = (unsigned char*)address;
 	unsigned char* end = begin + length - 1;
@@ -57,4 +59,18 @@ void debug_bochs_memdump( void* address, unsigned int length )
 
 		debug_bochs_printf( "\n" );
 	}
+}
+
+void panic( const char* txt, ... )
+{
+	interrupts_disable();
+
+	va_list ap;
+	va_start( ap, txt );
+
+	format_string_varg( output_bochs_char, 0, txt, ap );
+
+	va_end( ap );
+
+	for( ;; );
 }

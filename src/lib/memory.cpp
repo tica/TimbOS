@@ -1,14 +1,10 @@
 
 #include "memory.h"
 
-#include "debug.h"
-
 void* memcpy( void* destination, const void* source, size_t count )
 {
-	//debug_bochs_printf( "memcpy from %x to %x (%x bytes)\n", source, destination, count );
-
-	unsigned char* dest = destination;
-	const unsigned char* src = source;
+	unsigned char* dest = reinterpret_cast<unsigned char*>( destination );
+	const unsigned char* src = reinterpret_cast<const unsigned char*>( source );
 	
 	while( count-- != 0 )
 	{
@@ -20,9 +16,7 @@ void* memcpy( void* destination, const void* source, size_t count )
 
 void* memset( void* destination, unsigned char value, size_t count )
 {
-	//debug_bochs_printf( "memset to %x, set %x (%x times)\n", destination, value, count );
-
-	unsigned char* dest = destination;
+	unsigned char* dest = reinterpret_cast<unsigned char*>( destination );
 	
 	while( count-- )
 	{

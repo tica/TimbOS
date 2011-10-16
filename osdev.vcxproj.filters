@@ -25,14 +25,14 @@
     <Filter Include="core\irq">
       <UniqueIdentifier>{7de905c1-f1a8-45d0-98d7-8817edc28aee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core\isr">
-      <UniqueIdentifier>{e731f076-8d21-455e-a1f9-2afa7a588ae8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core\io">
       <UniqueIdentifier>{f49ef8ae-7221-490e-9326-4d07f1d1d898}</UniqueIdentifier>
     </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{e43ba345-a31d-4628-afa6-4c8f38541014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\isr">
+      <UniqueIdentifier>{e731f076-8d21-455e-a1f9-2afa7a588ae8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,12 +61,6 @@
       <Filter>core\mm</Filter>
     </ClInclude>
     <ClInclude Include="src\paging.h">
-      <Filter>core\mm</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory.h">
-      <Filter>lib</Filter>
-    </ClInclude>
-    <ClInclude Include="src\pmem.h">
       <Filter>core\mm</Filter>
     </ClInclude>
     <ClInclude Include="src\kb.h">
@@ -99,6 +93,21 @@
     <ClInclude Include="src\gdt.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="src\lib\memory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mm.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mmdef.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mbtutil.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physical.h">
+      <Filter>core\mm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\linker.ld">
@@ -109,9 +118,6 @@
     </None>
     <None Include="src\loader.low">
       <Filter>setup</Filter>
-    </None>
-    <None Include="src\loader.s">
-      <Filter>boot</Filter>
     </None>
     <None Include="src\processor.s">
       <Filter>core</Filter>
@@ -140,12 +146,12 @@
     <None Include="start.bat">
       <Filter>build</Filter>
     </None>
+    <None Include="src\loader.s">
+      <Filter>boot</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\console.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\format.c">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\kernel.cpp">
@@ -155,12 +161,6 @@
       <Filter>core\mm</Filter>
     </ClCompile>
     <ClCompile Include="src\paging.cpp">
-      <Filter>core\mm</Filter>
-    </ClCompile>
-    <ClCompile Include="src\memory.c">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pmem.cpp">
       <Filter>core\mm</Filter>
     </ClCompile>
     <ClCompile Include="src\kb.cpp">
@@ -198,6 +198,18 @@
     </ClCompile>
     <ClCompile Include="src\debug.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\memory.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mm.cpp">
+      <Filter>core\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\format.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physical.cpp">
+      <Filter>core\mm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,12 +2,14 @@
 #include "system.h"
 #include "paging.h"
 
-#include "memory.h"
+#include "mmdef.h"
+
+#include "lib/memory.h"
 #include "processor.h"
 #include "debug.h"
 #include "elf.h"
 #include "console.h"
-#include "pmem.h"
+#include "mm.h"
 
 
 void invlpg( uintptr_t virtual_addr )
@@ -31,14 +33,27 @@ struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ null_page_table[0x400];
 
 struct page_table_entry_t __ATTRIBUTE_PAGEALIGN__ kernel_heap_page_tables[0x400][0x10];
 
-void paging_init( void )
+void mm::paging::init( uintptr_t linear_mapping_end, uintptr_t virtual_base )
 {
-	TRACE();
-
 	debug_bochs_printf( "KernelPageDirectory = %x, cr3 = 0x%x\n", &KernelPageDirectory, read_cr3() );
 
 	KernelPageDirectory.init();
 
+	for( uintptr_t p = 0; p < linear_mapping_end; p += LARGE_PAGE_SIZE )
+	{
+		uintptr_t virt = virtual_base + p;
+
+		page_dir_entry_t& pde = KernelPageDirectory[virt >> LARGE_PAGE_SHIFT];
+		pde.enable4m = 1;
+		pde.writable = 1;
+		pde.present = 1;
+		pde.page_frame_addr = p >> LARGE_PAGE_SHIFT;
+	}
+
+	KernelPageDirectory[0x000].user = 1;
+	KernelPageDirectory[0x300].user = 1;
+
+	/*
 	for( int i = 0; i < 16; ++i )
 	{
 		auto pte = &null_page_table[8 + i];
@@ -56,11 +71,12 @@ void paging_init( void )
 	pde.page_table_addr = (uintptr_t)KernelPageDirectory.virtual_to_physical( null_page_table ) >> 12;
 
 	KernelPageDirectory[0] = pde;
+	*/
 }
 
 extern CONSOLE console;
 
-void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kernel_base )
+void mm::paging::paging_build_kernel_table( multiboot_elf_section_header_table* esht, uintptr_t kernel_base )
 {
 	TRACE2( esht, kernel_base );
 
@@ -84,15 +100,15 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 				*/
 
 			size_t size = esh->sh_size;
-			int pgindex = (esh->sh_addr >> 12) & 0x3FF;
+			int ptindex = (esh->sh_addr >> PAGE_SHIFT) & 0x3FF;
 			uintptr_t virtual_addr = esh->sh_addr;
 
 			while( size > 0 )
 			{
 				uintptr_t physical_address = KernelPageDirectory.virtual_to_physical( virtual_addr );
-				pmem_reserve( physical_address );
+				//pmem_reserve( physical_address );
 
-				page_table_entry_t* pte = &kernel_page_table[pgindex];
+				page_table_entry_t* pte = &kernel_page_table[ptindex];
 				pte->page_addr = physical_address >> 12;
 				pte->present = 1;
 				pte->user = 1; // HACK!
@@ -100,7 +116,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 
 				//debug_bochs_printf( "Mapping %x => %x (pgindex = %x)\n", virtual_addr, physical_address, pgindex );
 
-				pgindex++;
+				ptindex++;
 
 				unsigned int page_step = 0x1000 - (virtual_addr % 0x1000);
 				if( page_step > size ) page_step = size;
@@ -141,7 +157,7 @@ void paging_build_kernel_table( elf_section_header_table_t* esht, uintptr_t kern
 	}
 }
 
-void map_page( uintptr_t physical_addr, uintptr_t virtual_addr, int flags )
+void mm::paging::map_page( uintptr_t physical_addr, uintptr_t virtual_addr, int flags )
 {
 	TRACE3( physical_addr, virtual_addr, flags );
 
@@ -176,7 +192,7 @@ void map_page( uintptr_t physical_addr, uintptr_t virtual_addr, int flags )
 
 }
 
-void paging_test( void )
+void mm::paging::paging_test( void )
 {
 	TRACE();
 
@@ -223,7 +239,7 @@ void paging_test( void )
 	debug_bochs_printf( "*p = %x\n", *p );
 	debug_bochs_printf( "*q = %x\n", *q );
 
-	debug_bochs_printf( "writing 0x8000...\n" );
+	/*debug_bochs_printf( "writing 0x8000...\n" );
 	p = (int*)0x8000;
 	for( int i = 0; i < 10000; ++i )
 	{
@@ -231,7 +247,7 @@ void paging_test( void )
 	}
 	debug_bochs_printf( "OK\n" );
 
-	DUMP( (void*)0x8000, 0x100 );
+	DUMP( (void*)0x8000, 0x100 );*/
 }
 
 extern "C" bool paging_handle_fault( struct cpu_state* r, uintptr_t virtual_address )
@@ -267,10 +283,10 @@ extern "C" bool paging_handle_fault( struct cpu_state* r, uintptr_t virtual_addr
 				
 				if( pte->reserved_flag ) // Memory has been 'reserved' => auto-alloc physical
 				{
-					uintptr_t phys_addr = pmem_alloc();
+					uintptr_t phys_addr = mm::alloc_pages_himem();
 					debug_bochs_printf( "paging_handle_fault: page was reserved, allocated new phys page @ %x\n", phys_addr );
 
-					pte->page_addr = phys_addr >> 12;					
+					pte->page_addr = phys_addr >> PAGE_SHIFT;					
 					pte->reserved_flag = 0;
 					pte->present = 1;
 

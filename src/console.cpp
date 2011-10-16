@@ -3,7 +3,7 @@
 #include "system.h"
 #include "video.h"
 #include "format.h"
-#include "memory.h"
+#include "lib/memory.h"
 
 CONSOLE::CONSOLE()
 {

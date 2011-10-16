@@ -1,20 +1,20 @@
 
 #include "system.h"
 #include "video.h"
-#include "memory.h"
+#include "lib/memory.h"
 #include "console.h"
 #include "debug.h"
 #include "multiboot.h"
 #include "processor.h"
 #include "elf.h"
 #include "paging.h"
-#include "pmem.h"
 #include "irq.h"
 #include "kb.h"
 #include "idt.h"
 #include "isr.h"
 #include "scheduler.h"
 #include "gdt.h"
+#include "mm.h"
 
 struct CONSOLE console;
 
@@ -50,86 +50,67 @@ void taskX( void )
 	}
 }
 
+/*
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackA[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackAk[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackB[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackBk[4096];
+*/
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackC[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackCk[4096];
 
-extern "C" void kmain( uintptr_t physical_multiboot_info, unsigned int magic )
+void floppy_test();
+cpu_state* floppy_irq( cpu_state* regs )
 {
-	TRACE2( physical_multiboot_info, magic );
+	console.printf( "floppy irq!\n" );
+	return regs;
+}
 
-	paging_init();
+void parse_command_line( multiboot_info* mbt )
+{
+	if( mbt->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME )
+	{
+		console.printf( "MultiBoot boot loader detected: %s\n", mbt->boot_loader_name );
+	}
 
+	if( mbt->flags & MULTIBOOT_INFO_CMDLINE )
+	{
+		console.printf( "MultiBoot command line: '%s'\n", mbt->cmdline );
+	}
+}
+
+extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
+{
+	TRACE2( mbt_info, magic );
 	console.printf( "******************************************************************\n" );
 	console.printf( "************************* This is TimbOS *************************\n" );
 	console.printf( "******************************************************************\n" );
-	check_cpu();
 
+	parse_command_line( mbt_info );
+	mm::init( mbt_info );
+
+	check_cpu();
 	gdt::init();
     idt::init();
     isr::init();
     irq::init();
-	keyboard::init();	
+	keyboard::init();
 
-	multiboot_info_t* virtual_mbt = (multiboot_info_t*)KernelPageDirectory.physical_to_virtual( physical_multiboot_info );
+	//mm::paging::paging_build_kernel_table( &virtual_mbt->u.elf_sec, 0xC0000000 );
 
-	if( virtual_mbt->flags & (1 << 9) )
-	{
-		virtual_mbt->boot_loader_name = KernelPageDirectory.physical_to_virtual( virtual_mbt->boot_loader_name );
+	mm::paging::paging_test();
 
-		console.printf( "MultiBoot boot loader detected: %s\n", virtual_mbt->boot_loader_name );
-	}
+	for( int i = 0; i < 5; ++i )
+		console.printf( "pmem_alloc() = %x, pmem_alloc_dma() = %x\n", mm::alloc_pages(1,1), mm::alloc_pages_dma( 32, 32 ) );
+	
+	console.printf( "idle\n" );
 
-	if( virtual_mbt->flags & (1 << 2) )
-	{
-		virtual_mbt->cmdline = KernelPageDirectory.physical_to_virtual(virtual_mbt->cmdline);
-
-		console.printf( "MultiBoot command line: '%s'\n", virtual_mbt->cmdline );
-	}
-
-	if( virtual_mbt->flags & (1 << 3) )
-	{
-		console.printf( "GRUB module list found!\n" );
-	}
-
-	if( virtual_mbt->flags & (1 << 0) )
-	{
-		console.printf( "Memory (Lower/Upper): %d KiB/%d KiB\n", virtual_mbt->mem_lower, virtual_mbt->mem_upper );
-	}
-	else
-	{
-		console.printf( "WARNING: MultiBoot header did not specify memory\n" );
-	}
-
-	if( virtual_mbt->flags & (1 << 6) )
-	{
-		console.printf( "Found memory map...\n" );
-		virtual_mbt->mmap_addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->mmap_addr );		
-	}
-
-	if( virtual_mbt->flags & (1 << 5) )
-	{
-		console.printf( "Found ELF section table @ %x, total entries = %d\n", virtual_mbt->u.elf_sec.addr, virtual_mbt->u.elf_sec.num );
-		virtual_mbt->u.elf_sec.addr = KernelPageDirectory.physical_to_virtual( virtual_mbt->u.elf_sec.addr );
-	}
-
-	pmem_init( virtual_mbt );
-	paging_build_kernel_table( &virtual_mbt->u.elf_sec, 0xC0000000 );
+	scheduler::new_task( stackC, stackCk, (void*)floppy_test );
+	irq::install_handler( 0, scheduler::next );
+	irq::install_handler( 6, floppy_irq );
 
 	debug_bochs_printf( "\n\nCrashing?\n\n" );
 	interrupts_enable();
-
-	paging_test();
-
-	console.printf( "idle\n" );
-
-	scheduler::new_task( stackA, stackAk, (void*)taskX<'A'> );
-	scheduler::new_task( stackB, stackBk, (void*)taskX<'B'> );
-	scheduler::new_task( stackC, stackCk, (void*)taskX<'C'> );
-	irq::install_handler( 0, scheduler::next );
 
 	// stay!
 	while( 1 )
