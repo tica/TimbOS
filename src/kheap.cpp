@@ -3,49 +3,327 @@
 #include "kheap.h"
 
 #include "debug.h"
-#include "paging.h"
+#include "mm.h"
+#include "mmdef.h"
 
-const uintptr_t	KERNEL_HEAP_VBASE		= 0xE0000000;
-const size_t	KERNEL_HEAP_SIZE		= 0x01000000;
-
-const size_t	KERNEL_HEAP_PAGES		= KERNEL_HEAP_SIZE / 0x1000;
-const size_t	KERNEL_HEAP_PAGETABLES	= KERNEL_HEAP_PAGES / 0x400;
-
-static PageTable __ATTRIBUTE_PAGEALIGN__ s_kheap_page_tables[KERNEL_HEAP_PAGETABLES];
-
-void kheap::init()
+enum HeapObjectStatus
 {
-	debug_bochs_printf( "Heap size: %d pages, requiring %d page tables\n", KERNEL_HEAP_PAGES, KERNEL_HEAP_PAGETABLES );	
+	HEAP_OBJECT_FREE = 0x11111111,	
+	HEAP_OBJECT_USED = 0xFFFFFFFF,
+	HEAP_OBJECT_INIT = 0x33333333,
+};
 
-	for( unsigned int i = 0; i < KERNEL_HEAP_PAGETABLES; ++i )
+// Placement new, we need this :>
+void* operator new( size_t, void* ptr )
+{
+	return ptr;
+}
+
+template<unsigned int obj_size>
+struct heap_object
+{
+	typedef heap_object<obj_size>	TMyType;
+
+private:
+	HeapObjectStatus		_status;
+	union
 	{
-		PageTable& pt = s_kheap_page_tables[i];
+		heap_object<obj_size>*	_next;
+		size_t					_size;
+	};
 
-		for( unsigned int j = 0; j < 0x400; ++j )
+	unsigned char _data[obj_size];
+
+public:
+	heap_object()
+		:	_status( HEAP_OBJECT_INIT ),
+			_next( 0 )
+	{
+	}
+
+	heap_object( TMyType* next )
+		:	_status( HEAP_OBJECT_FREE ),
+			_next( next )
+	{
+	}
+
+	bool	is_free() const
+	{
+		return _status == HEAP_OBJECT_FREE;
+	}
+
+	bool	is_used() const
+	{
+		return _status == HEAP_OBJECT_USED;
+	}
+
+	size_t	size() const
+	{
+		return _size;
+	}
+
+	void*	alloc( TMyType** pchain )
+	{
+		*pchain = _next;
+
+		_status = HEAP_OBJECT_USED;
+		_size = obj_size;
+
+		return _data;
+	}
+
+	void	free( TMyType** pchain )
+	{
+		_next = *pchain;
+		*pchain = this;
+
+		_status = HEAP_OBJECT_FREE;
+	}
+};
+
+template<unsigned int obj_size, unsigned int page_count>
+struct heap_chunk
+{
+private:
+	typedef heap_chunk<obj_size, page_count>	TMyType;
+	typedef heap_object<obj_size>				TObject;
+
+	enum
+	{
+		overhead_size = 8, // change when adding fields to this type
+		total_size = (page_count * PAGE_SIZE),
+		payload_size = (total_size - overhead_size),
+		object_count = payload_size / sizeof(heap_object<obj_size>)
+	};
+
+	TMyType*	_next;
+	TObject*	_first_free;
+	TObject		_objects[object_count];
+
+public:
+	heap_chunk()
+		:	_next( 0 ),
+			_first_free( 0 )
+	{		
+		TObject* next = new (&_objects[object_count-1]) TObject( 0 );		
+
+		for( unsigned int i = object_count - 1; i != 0; --i )
 		{
-			page_table_entry_t& pte = pt.entries[j];
-			pte.present = 0;
-			pte.writable = 1;
-			pte.reserved_flag = 1;
-
-			//debug_bochs_printf( "pte @ %x phy set as reserved\n", KernelPageDirectory.virtual_to_physical( &pte ) );
+			next = new (&_objects[i-1]) TObject( next );
 		}
 
-		uintptr_t pt_phys = KernelPageDirectory.virtual_to_physical( s_kheap_page_tables + i );
-		uintptr_t pt_mapped_virtual = KERNEL_HEAP_VBASE + i * 0x1000 * 0x400;
-
-		unsigned int pd_index = pt_mapped_virtual >> 22;
-
-		debug_bochs_printf( "Kernel Heap page table #%d pd_index %x\n", i, pd_index );
-
-		auto& pd_entry = KernelPageDirectory[pd_index];
-		pd_entry.present = 1;
-		pd_entry.writable = 1;
-		pd_entry.page_table_addr = pt_phys >> 12;
+		_first_free = next;
 	}
+
+	void*	alloc()
+	{
+		void* ptr = _first_free->alloc( &_first_free );
+
+		//debug_bochs_printf( "allocated mem from chunk (obj_size = %d, object_count = %d) @ %x, new first_free = %x\n", obj_size, object_count, ptr, _first_free );
+		return ptr;
+	}
+
+	void	free( void* ptr )
+	{
+		TObject* obj = reinterpret_cast<TObject*>( uintptr_t(ptr) - sizeof(heap_object<0>) );
+		obj->free( &_first_free );
+		
+		//debug_bochs_printf( "freed object, _first_free = %x\n", _first_free );
+	}
+
+	void	chain( TMyType* next )
+	{
+		_next = next;
+	}
+
+	TMyType*	next()
+	{
+		return _next;
+	}
+
+	bool	full()
+	{
+		return _first_free == 0;
+	}
+};
+
+struct iheap_chunk_group
+{
+	virtual size_t	object_size() = 0;
+	virtual void*	alloc() = 0;
+	virtual void	free( void* ptr ) = 0;
+};
+
+template<unsigned int obj_size, unsigned int page_count>
+struct heap_chunk_group
+	:	public iheap_chunk_group
+{
+	typedef heap_chunk<obj_size, page_count>	TChunk;
+
+private:
+	TChunk*			_first_chunk;
+
+	unsigned int	_chunk_count;
+	unsigned int	_free_object_count;	
+	unsigned int	_alloc_count;
+
+public:
+	heap_chunk_group()
+		:	_first_chunk( 0 ),
+			_chunk_count( 0 ),
+			_free_object_count( 0 ),			
+			_alloc_count( 0 )
+	{
+	}
+
+	virtual void*	alloc()
+	{
+		if( _first_chunk )
+		{
+			void* obj = _first_chunk->alloc();
+			if( _first_chunk->full() )
+			{
+				debug_bochs_printf( "FULL\n" );
+				_first_chunk = _first_chunk->next();
+			}
+
+			return obj;
+		}
+		else
+		{
+			debug_bochs_printf( "ALLOC NEW\n" );
+			return alloc_from_new();
+		}
+	}
+
+	virtual void	free( void* ptr )
+	{
+		// Chunk always starts at the start of the page
+		// Multi-page chunks only contain 1 object, so this is always true
+		TChunk* chunk = reinterpret_cast<TChunk*>( uintptr_t(ptr) & ~PAGE_MASK );
+		bool was_full = chunk->full();
+
+		chunk->free( ptr );
+
+		if( was_full )
+		{
+			// FIXME: Skip is completely freed?
+
+			// lock?
+			chunk->chain( _first_chunk );
+			_first_chunk = chunk;
+			// unlock?
+		}
+	}
+
+	virtual size_t	object_size()
+	{
+		return obj_size;
+	}
+
+private:
+	void*	alloc_from_new()
+	{
+		void* p = mm::alloc_pages( page_count );
+		if( !p ) return 0;
+
+		TChunk* chunk = new (p) TChunk;
+		void* obj = chunk->alloc();
+
+		// Don't have to chain a already-full chunk
+		if( !chunk->full() )
+		{
+			// lock?
+			chunk->chain( _first_chunk );
+			_first_chunk = chunk;
+			// unlock?
+		}
+
+		return obj;
+	}
+};
+
+static heap_chunk_group<8, 1>			heap_chunk_group_8;
+static heap_chunk_group<16, 1>			heap_chunk_group_16;
+static heap_chunk_group<32, 1>			heap_chunk_group_32;
+static heap_chunk_group<64, 1>			heap_chunk_group_64;
+static heap_chunk_group<128, 1>			heap_chunk_group_128;
+static heap_chunk_group<256, 1>			heap_chunk_group_256;
+static heap_chunk_group<512, 1>			heap_chunk_group_512;
+static heap_chunk_group<1024-12, 1>		heap_chunk_group_1024;
+static heap_chunk_group<2048-12, 1>		heap_chunk_group_2048;
+static heap_chunk_group<4096-16, 1>		heap_chunk_group_4096;
+static heap_chunk_group<8192-16, 2>		heap_chunk_group_8192;
+static heap_chunk_group<16384-16, 4>	heap_chunk_group_16384;
+static heap_chunk_group<32768-16, 8>	heap_chunk_group_32768;
+static heap_chunk_group<65536-16, 16>	heap_chunk_group_65536;
+static heap_chunk_group<131072-16, 32>	heap_chunk_group_131072;
+static heap_chunk_group<262144-16, 64>	heap_chunk_group_262144;
+static heap_chunk_group<524288-16, 128>	heap_chunk_group_524288;
+
+static iheap_chunk_group*	s_heap_chunk_groups[] =
+{
+	&heap_chunk_group_8,
+	&heap_chunk_group_16,
+	&heap_chunk_group_32,
+	&heap_chunk_group_64,
+	&heap_chunk_group_128,
+	&heap_chunk_group_256,
+	&heap_chunk_group_512,
+	&heap_chunk_group_1024,
+	&heap_chunk_group_2048,
+	&heap_chunk_group_4096,
+	&heap_chunk_group_8192,
+	&heap_chunk_group_16384,
+	&heap_chunk_group_32768,
+	&heap_chunk_group_65536,
+	&heap_chunk_group_131072,
+	&heap_chunk_group_262144,
+	&heap_chunk_group_524288,
+};
+
+static iheap_chunk_group*	find_chunk_group( size_t request_size )
+{
+	for( unsigned int i = 0; i < _countof(s_heap_chunk_groups); ++i )
+	{
+		if( s_heap_chunk_groups[i]->object_size() >= request_size )
+		{
+			return s_heap_chunk_groups[i];
+		}
+	}
+
+	return 0;
 }
 
-uintptr_t kheap::alloc( size_t size )
+void	mm::heap::init()
 {
-	return size;
 }
+
+void*	mm::heap::alloc( size_t size )
+{
+	auto chunk_group = find_chunk_group( size );
+	if( chunk_group )
+		return chunk_group->alloc();
+
+	return 0;
+}
+
+void	mm::heap::free( void* ptr )
+{
+	heap_object<0>* obj = reinterpret_cast<heap_object<0>*>( uintptr_t(ptr) - sizeof(heap_object<0>) );
+	if( obj->is_used() )
+	{
+		auto group = find_chunk_group( obj->size() );
+		if( group )
+		{
+			return group->free( ptr );			
+		}
+	}
+	
+	debug_bochs_printf( "Trying to free non-allocated pointer (%x)\n", ptr );
+}
+
+void	mm::heap::stat()
+{
+}
+

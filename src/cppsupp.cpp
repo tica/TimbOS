@@ -1,4 +1,6 @@
 
+#include "debug.h"
+
 void *__gxx_personality_v0 = 0;
 
 extern "C"
@@ -36,4 +38,10 @@ void __cxa_finalize(void *)
                 --iObject;
                 object[iObject].f(object[iObject].p);
         }
+}
+
+extern "C" void __cxa_pure_virtual()
+{
+	debug_bochs_printf( "OMG pure virtual!?!??\n" );
+	while (1);
 }

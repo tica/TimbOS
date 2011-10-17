@@ -5,6 +5,7 @@
 #include "physical.h"
 #include "mbtutil.h"
 #include "paging.h"
+#include "kheap.h"
 
 #include "multiboot.h"
 #include "debug.h"
@@ -78,6 +79,7 @@ void mm::init( const multiboot_info* mbt_info )
 	debug_bochs_printf( "mm::init: himem_size = 0x%p\n", himem_size );
 
 	physical::init( mbt_info, kernel_static_end, kernel_dynamic_end, himem_end );
+	heap::init();
 }
 
 void*	mm::alloc_pages_dma( unsigned int count, unsigned int align )

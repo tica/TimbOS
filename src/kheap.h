@@ -2,10 +2,17 @@
 #ifndef _KHEAP_H_INC_
 #define _KHEAP_H_INC_
 
-namespace kheap
+namespace mm
 {
-	void init();
-	uintptr_t alloc( size_t size );
+	namespace heap
+	{
+		void	init();
+
+		void*	alloc( size_t size );
+		void	free( void* ptr );
+
+		void	stat();
+	}
 }
 
 #endif

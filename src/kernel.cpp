@@ -15,6 +15,7 @@
 #include "scheduler.h"
 #include "gdt.h"
 #include "mm.h"
+#include "kheap.h"
 
 struct CONSOLE console;
 
@@ -102,8 +103,32 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 
 	for( int i = 0; i < 5; ++i )
 		console.printf( "pmem_alloc() = %x, pmem_alloc_dma() = %x\n", mm::alloc_pages(1,1), mm::alloc_pages_dma( 32, 32 ) );
+
+	void* ptrlist[25];
+
+	memtest:
+
+	for( unsigned int i = 0; i < _countof(ptrlist); ++i )
+	{
+		size_t sz = i * 4;
+		void* p = mm::heap::alloc( sz );
+
+		debug_bochs_printf( "mm::heap::alloc( %x ) = %x\n", sz, p );
+
+		ptrlist[i] = p;
+	}
+
+	for( unsigned int i = 0; i < _countof(ptrlist); ++i )
+	{
+		void* p = ptrlist[i];
+		debug_bochs_printf( "calling mm::heap::free( %x )...\n", p );		
+		mm::heap::free( p );
+	}
+
+	goto memtest;
 	
 	console.printf( "idle\n" );
+	while( 1 );
 
 	scheduler::new_task( stackC, stackCk, (void*)floppy_test );
 	irq::install_handler( 0, scheduler::next );
