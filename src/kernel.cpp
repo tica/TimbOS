@@ -16,6 +16,7 @@
 #include "gdt.h"
 #include "mm.h"
 #include "kheap.h"
+#include "drv.h"
 
 struct CONSOLE console;
 
@@ -136,6 +137,9 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	debug_bochs_printf( "\n\nAbout to enable interrupts... crashing???\n" );
 	interrupts_enable();
 	debug_bochs_printf( "Not yet!\n\n" );
+
+	auto drvmgr = new drv::DriverManager;
+	drvmgr->probe_all();
 	
 	console.printf( "idle\n" );
 

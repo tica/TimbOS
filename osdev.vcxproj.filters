@@ -34,6 +34,12 @@
     <Filter Include="core\isr">
       <UniqueIdentifier>{e731f076-8d21-455e-a1f9-2afa7a588ae8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\drv">
+      <UniqueIdentifier>{13bd45f6-c040-4ec3-8e64-c1fe238aa669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\drv\itf">
+      <UniqueIdentifier>{3f72b418-10d8-411a-a083-c98ac4436c0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -107,6 +113,12 @@
     </ClInclude>
     <ClInclude Include="src\physical.h">
       <Filter>core\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drv.h">
+      <Filter>core\drv</Filter>
+    </ClInclude>
+    <ClInclude Include="src\driverbase.h">
+      <Filter>core\drv\itf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +222,9 @@
     </ClCompile>
     <ClCompile Include="src\physical.cpp">
       <Filter>core\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\drvmanager.cpp">
+      <Filter>core\drv</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

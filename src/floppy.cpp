@@ -1,6 +1,9 @@
 
 #include "system.h"
 
+#include "drv.h"
+#include "driverbase.h"
+
 #include "mmdef.h"
 #include "mm.h"
 #include "irq.h"
@@ -563,8 +566,6 @@ int floppy_read_sectors(int base, unsigned int sector_index, unsigned int num_se
 
 void floppy_test()
 {
-	floppy_detect_drives();	
-
 	int r = floppy_reset( floppy_base );
 	TRACE1( r );
 
@@ -588,3 +589,19 @@ void floppy_init()
 	floppy_dmabuf_virtual = (unsigned char*)mm::alloc_pages_dma( page_count, 64 );
 	floppy_dmabuf_physical = mm::kernel_virtual_to_physical( floppy_dmabuf_virtual );
 }
+
+void floppy_probe( drv::DriverManager& )
+{
+	outportb( 0x70, 0x10 );
+	uint8_t drives = inportb( 0x71 );
+
+	unsigned int driveType0 = drives >> 4;
+	unsigned int driveType1 = drives & 0xF;
+
+	console.printf(" - Floppy drive 0: %s\n", drive_types[driveType0]);
+	console.printf(" - Floppy drive 1: %s\n", drive_types[driveType1]);
+}
+
+
+drv::REGISTER_DRIVER_PROBE( floppy_probe );
+

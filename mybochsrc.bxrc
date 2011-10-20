@@ -8,7 +8,7 @@ vgaromimage: file="C:\Program Files (x86)\Bochs-2.4.6/VGABIOS-lgpl-latest"
 boot: floppy
 floppy_bootsig_check: disabled=0
 floppya: type=1_44, 1_44="floppy.1440k.img", status=inserted
-# no floppyb
+floppyb: type=1_2
 ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
 ata1: enabled=1, ioaddr1=0x170, ioaddr2=0x370, irq=15
 ata2: enabled=0

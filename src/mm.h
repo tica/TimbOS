@@ -23,3 +23,4 @@ namespace mm
 	// This function returns physical addresses!
 	uintptr_t	alloc_pages_himem( unsigned int count = 1, unsigned int align = 1 );
 }
+
