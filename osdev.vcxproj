@@ -76,6 +76,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="rtl.h" />
+    <ClInclude Include="src\blockdevice.h" />
     <ClInclude Include="src\console.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\driverbase.h" />

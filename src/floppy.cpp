@@ -3,9 +3,11 @@
 
 #include "drv.h"
 #include "driverbase.h"
+#include "blockdevice.h"
 
 #include "mmdef.h"
 #include "mm.h"
+#include "kheap.h"
 #include "irq.h"
 #include "debug.h"
 #include "io.h"
@@ -63,7 +65,17 @@ enum floppy_commands
 	CMD_SEEK = 15,              // SEEK
 };
 
-static const char * drive_types[8] =
+enum FloppyDriveType
+{
+	FloppyDriveNone = 0,
+	FloppyDrive360k,
+	FloppyDrive1_2M,
+	FloppyDrive720k,
+	FloppyDrive1_44M,
+	FloppyDrive2_88M
+};
+
+static const char * FloppyDriveTypeNames[8] =
 {
 	"none",
 	"360kB 5.25\"",
@@ -75,16 +87,6 @@ static const char * drive_types[8] =
 	"unknown type",
 	"unknown type"
 };
-
-// Obviously you'd have this return the data, start drivers or something.
-void floppy_detect_drives()
-{
-	outportb(0x70, 0x10);
-	unsigned drives = inportb(0x71);
-
-	console.printf(" - Floppy drive 0: %s\n", drive_types[drives >> 4]);
-	console.printf(" - Floppy drive 1: %s\n", drive_types[drives & 0xf]);
-}
 
 //
 // The MSR byte: [read-only]
@@ -590,16 +592,116 @@ void floppy_init()
 	floppy_dmabuf_physical = mm::kernel_virtual_to_physical( floppy_dmabuf_virtual );
 }
 
+
+class FloppyController
+	:	public drv::itf::IDriverBase
+{
+	uintptr_t	_base;
+
+public:
+	FloppyController( uintptr_t base )
+		:	_base( base )
+	{
+	}
+
+	// IDriverBase
+	virtual const char*	description()
+	{
+		return "Floppy Drive Controller";
+	}
+
+	virtual void		init()
+	{
+	}
+
+};
+
+class FloppyDrive
+	:	public drv::itf::IBlockDevice
+{
+	unsigned int		_idx;
+	FloppyDriveType		_type;
+	FloppyController*	_controller;
+
+public:
+	FloppyDrive( unsigned int drive_idx, FloppyDriveType type, FloppyController* controller )
+		:	_idx( drive_idx ),
+			_type( type ),
+			_controller( controller )
+	{
+	}
+
+	// IDriverBase
+	virtual const char*	description()
+	{
+		return FloppyDriveTypeNames[_type];
+	}
+
+	virtual void		init()
+	{
+	}
+
+	// IBlockDevice
+	virtual unsigned int	block_size()
+	{
+		return 512;
+	}
+	virtual unsigned int	block_count()
+	{
+		switch( _type )
+		{		
+		case FloppyDrive1_2M:
+			return 80 * 15 * 2;			
+		case FloppyDrive1_44M:
+			return 80 * 18 * 2;
+		case FloppyDriveNone:
+		case FloppyDrive360k:
+		case FloppyDrive720k:
+		case FloppyDrive2_88M:
+		default:
+			return 0;
+		}
+	}
+
+	virtual bool	read( unsigned int first_block_index, unsigned int block_count, void* buffer )
+	{
+		(void)first_block_index;
+		(void)block_count;
+		(void)buffer;
+		return false;
+	}
+	virtual bool	write( unsigned int first_block_index, unsigned int block_count, const void* buffer )
+	{
+		(void)first_block_index;
+		(void)block_count;
+		(void)buffer;
+		return false;
+	}
+};
+
 void floppy_probe( drv::DriverManager& )
 {
 	outportb( 0x70, 0x10 );
-	uint8_t drives = inportb( 0x71 );
+	uint8_t driveTypes = inportb( 0x71 );
 
-	unsigned int driveType0 = drives >> 4;
-	unsigned int driveType1 = drives & 0xF;
+	if( driveTypes )
+	{
+		auto controller = new FloppyController( 0x03f0 );
 
-	console.printf(" - Floppy drive 0: %s\n", drive_types[driveType0]);
-	console.printf(" - Floppy drive 1: %s\n", drive_types[driveType1]);
+		FloppyDriveType driveType0 = (FloppyDriveType)(driveTypes >> 4);
+		FloppyDriveType driveType1 = (FloppyDriveType)(driveTypes & 0xF);
+
+		if( driveType0 )
+		{
+			auto floppy0 = new FloppyDrive( 0, driveType0, controller );
+			(void)floppy0;
+		}
+		if( driveType1 )
+		{
+			auto floppy1 = new FloppyDrive( 1, driveType1, controller );
+			(void)floppy1;
+		}
+	}
 }
 
 

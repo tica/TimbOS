@@ -120,6 +120,9 @@
     <ClInclude Include="src\driverbase.h">
       <Filter>core\drv\itf</Filter>
     </ClInclude>
+    <ClInclude Include="src\blockdevice.h">
+      <Filter>core\drv\itf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\linker.ld">
