@@ -79,5 +79,52 @@ void CONSOLE::printf( const char* format, ... )
 	}
 }
 
+static bool isprintable( char ch )
+{
+	return ch >= 0x20 && ch <= 0x7E;
+}
 
- 
+void CONSOLE::dump( const void* address, size_t length )
+{
+	unsigned char* begin = (unsigned char*)address;
+	unsigned char* end = begin + length - 1;
+
+	uintptr_t first_addr = ((uintptr_t)begin) & ~0xF;
+	uintptr_t last_addr = ((uintptr_t)end) & ~0xF;	
+
+	for( uintptr_t line_addr = first_addr; line_addr <= last_addr; line_addr += 16 )
+	{
+		printf( "%p ", line_addr );
+
+		unsigned char* ptr = (unsigned char*)line_addr;
+		for( unsigned int i = 0; i < 16; ++i )
+		{
+			if( ptr >= begin && ptr <= end )
+				printf( "%2x ", *ptr );
+			else
+				printf( "?? ", *ptr );
+
+			ptr++;
+		}
+
+		printf( "  " );
+
+		ptr = (unsigned char*)line_addr;
+		for( unsigned int i = 0; i < 16; ++i )
+		{
+			if( ptr >= begin && ptr <= end )
+				if( isprintable( *ptr ) )
+					printf( "%c", *ptr );
+				else
+					printf( ".", *ptr );
+			else
+				printf( " ", *ptr );
+
+			ptr++;
+		}
+
+		printf( "\n" );
+	}
+}
+
+	

@@ -24,6 +24,7 @@ public:
 	CONSOLE();
 public:
 	void printf( const char* format, ... );
+	void dump( const void* mem, size_t len );
 
 private:
 	void move_cursor( int x, int y );
