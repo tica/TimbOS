@@ -2,6 +2,7 @@
 #include "system.h"
 #include "physical.h"
 
+#include "mm.h"
 #include "mmdef.h"
 #include "mbtutil.h"
 
@@ -49,12 +50,12 @@ public:
 	void init( uintptr_t physical_base, size_t num_pageframes, int* bitmap )
 	{
 		_base = physical_base;
-		_num_pageframes = num_pageframes,
+		_num_pageframes = num_pageframes;
 		_prev_idx = 0;
 		_bitmap = bitmap;
 
 		for( unsigned int i = 0; i < _num_pageframes; ++i )
-		{
+		{			
 			status(i) = 0;
 		}
 	}
@@ -181,11 +182,16 @@ PhysicalPool* find_pool( uintptr_t physical_addr )
 	return 0;
 }
 
-void mm::physical::free( uintptr_t physical_addr )
+void mm::physical::free( uintptr_t physical_addr, unsigned int pages )
 {
-	auto pool = find_pool( physical_addr );
-	if( pool )
-		pool->free( physical_addr );
+	for( unsigned int i = 0; i < pages; ++i )
+	{
+		uintptr_t addr = physical_addr + i * PAGE_SIZE;
+
+		auto pool = find_pool( addr );
+		if( pool )
+			pool->free( addr );
+	}
 }
 
 void reserve( uintptr_t physical_addr )
@@ -210,10 +216,10 @@ static T* linear_alloc( size_t size, size_t align, uintptr_t* pos )
 	while( *pos & align )
 		++*pos;
 
-	T* obj = reinterpret_cast<T*>( *pos );
+	uintptr_t obj_physical = *pos;
 	*pos += size;
 
-	return obj;
+	return (T*)mm::kernel_physical_to_virtual( obj_physical );
 }
 
 void mm::physical::init( const multiboot_info* mbt, uintptr_t kernel_static_end, uintptr_t kernel_dynamic_end, uintptr_t himem_end )
@@ -221,7 +227,7 @@ void mm::physical::init( const multiboot_info* mbt, uintptr_t kernel_static_end,
 	if( !himem_end )
 	{
 		PANIC( "NO MEMORY FOUND!\n" );
-	}	
+	}
 	
 	size_t dma_pool_size = (DMA_MEMORY_LIMIT < kernel_dynamic_end) ? DMA_MEMORY_LIMIT : kernel_dynamic_end;	
 	size_t default_pool_size = kernel_dynamic_end - dma_pool_size;
@@ -247,7 +253,7 @@ void mm::physical::init( const multiboot_info* mbt, uintptr_t kernel_static_end,
 	debug_bochs_printf( "  DMA memory     %x-%x\n", DMAPool.base(), DMAPool.limit() );
 	debug_bochs_printf( "  Default memory %x-%x\n", DefaultPool.base(), DefaultPool.limit() );
 	debug_bochs_printf( "  High memory    %x-%x\n", HiMemPool.base(), HiMemPool.limit() );
-	
+
 	multiboot::iterate_mmap( mbt,
 		[](const multiboot_mmap_entry* mmap)
 		{
@@ -260,6 +266,6 @@ void mm::physical::init( const multiboot_info* mbt, uintptr_t kernel_static_end,
 	);
 
 	// Reserve kernel code + pmem bitmaps (added above to kernel_static_end)
-	reserve_range( 0, kernel_static_end );	
+	reserve_range( 0, kernel_static_end );
 }
 

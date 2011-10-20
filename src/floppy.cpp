@@ -1,8 +1,12 @@
 
 #include "system.h"
 
+#include "mmdef.h"
+#include "mm.h"
+#include "irq.h"
 #include "debug.h"
 #include "io.h"
+#include "lib/memory.h"
 #include "console.h"
 extern CONSOLE console;
 
@@ -15,14 +19,26 @@ void timer_sleep( int ms10 )
 	}
 }
 
-void irq_wait( int )
+static volatile bool s_floppy_irq = false;
+
+cpu_state* floppy_irq( cpu_state* regs )
 {
+	s_floppy_irq = true;
+	return regs;
+}
+
+void irq_wait()
+{
+	while( !s_floppy_irq )
+		;
+
+	s_floppy_irq = false;
 }
 
 // standard base address of the primary floppy controller
 static const int floppy_base = 0x03f0;
 // standard IRQ number for floppy controllers
-static const int floppy_irq = 6;
+static const int DEFAULT_FLOPPY_IRQ = 6;
 
 // The registers of interest. There are more, but we only use these here.
 enum floppy_registers
@@ -193,7 +209,7 @@ int floppy_calibrate(int base) {
         floppy_write_cmd(base, CMD_RECALIBRATE);
         floppy_write_cmd(base, 0); // argument is drive, we only support 0
 
-        irq_wait(floppy_irq);
+        irq_wait();
         floppy_check_interrupt(base, &st0, &cyl);
         
         if(st0 & 0xC0) {
@@ -220,7 +236,7 @@ int floppy_reset(int base)
     outportb(base + FLOPPY_DOR, 0x00); // disable controller
     outportb(base + FLOPPY_DOR, 0x0C); // enable controller
 
-    irq_wait(floppy_irq); // sleep until interrupt occurs
+    irq_wait(); // sleep until interrupt occurs
 
     {
         unsigned int st0, cyl; // ignore these here..
@@ -264,7 +280,7 @@ int floppy_seek(int base, unsigned cyli, int head) {
         floppy_write_cmd(base, head<<2);
         floppy_write_cmd(base, cyli);
 
-        irq_wait(floppy_irq);
+        irq_wait();
         floppy_check_interrupt(base, &st0, &cyl);
 
         if(st0 & 0xC0) {
@@ -297,8 +313,9 @@ typedef enum {
 // must be large enough for whatever DMA transfer we might desire
 // and must not cross 64k borders so easiest thing is to align it
 // to 2^N boundary at least as big as the block
-#define floppy_dmalen 0x4800
-static char* floppy_dmabuf = (char*)0x8000;
+#define FLOPPY_DMALEN 0x4800
+static unsigned char* floppy_dmabuf_virtual = 0;
+static uintptr_t floppy_dmabuf_physical = 0;
 
 static void floppy_dma_init(floppy_dir dir)
 {
@@ -308,8 +325,8 @@ static void floppy_dma_init(floppy_dir dir)
         unsigned long l;    // 1 long = 32-bit
     } a, c; // address and count
 
-    a.l = (unsigned) floppy_dmabuf;
-    c.l = (unsigned) floppy_dmalen - 1; // -1 because of DMA counting
+    a.l = (unsigned) floppy_dmabuf_physical;
+    c.l = (unsigned) FLOPPY_DMALEN - 1; // -1 because of DMA counting
 
     // check that address is at most 24-bits (under 16MB)
     // check that count is at most 16-bits (DMA limit)
@@ -398,7 +415,7 @@ int floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
         floppy_write_cmd(base, 0x1b); // GAP3 length, 27 is default for 3.5"
         floppy_write_cmd(base, 0xff); // data length (0xff if B/S != 0)
         
-        irq_wait(floppy_irq); // don't SENSE_INTERRUPT here!
+        irq_wait(); // don't SENSE_INTERRUPT here!
 
         // first read status information
         unsigned char st0, st1, st2, rcy, rhe, rse, bps;
@@ -496,19 +513,78 @@ int floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
     return -1;
 }
 
+int cyl_cache_index = -1;
+
 int floppy_read_track(int base, unsigned cyl)
 {
-    return floppy_do_track(base, cyl, floppy_dir_read);
+	cyl_cache_index = -1;
+
+    int r = floppy_do_track(base, cyl, floppy_dir_read);
+
+	if( r == 0 )
+		cyl_cache_index = cyl;
+
+	return r;
+}
+
+int floppy_read_sector(int base, unsigned int sector_index, void* buffer)
+{
+	int error = 0;
+
+	unsigned int cylinder = sector_index / (18 * 2);
+	unsigned int offset = (sector_index % (18 * 2)) * 512;
+
+	if( cylinder != (unsigned)cyl_cache_index )
+	{
+		error = floppy_read_track( base, cylinder );
+	}
+
+	if( !error )
+	{
+		memcpy( buffer, floppy_dmabuf_virtual + offset, 512 );	
+	}
+
+	return error;
+}
+
+int floppy_read_sectors(int base, unsigned int sector_index, unsigned int num_sectors, unsigned char* buffer)
+{
+	int error = 0;
+
+	for( unsigned int i = 0; i < num_sectors; ++i )
+	{
+		error = floppy_read_sector( base, sector_index + i, buffer + 512 * i );
+
+		if( error ) break;
+	}
+
+	return error;
 }
 
 void floppy_test()
 {
 	floppy_detect_drives();	
 
-	int r = floppy_read_track( floppy_base, 0 );
+	int r = floppy_reset( floppy_base );
 	TRACE1( r );
 
-	DUMP(floppy_dmabuf, 0x400);
+	//r = floppy_read_track( floppy_base, 0 );
+	//TRACE1( r );
+
+	unsigned char buf[2048];
+	r = floppy_read_sectors( floppy_base, 0, 4, (unsigned char*)buf );
+
+	DUMP(buf, 0x400);
+	console.dump(buf, 0x100 );
 
 	while( 1 );
+}
+
+void floppy_init()
+{
+	irq::install_handler( DEFAULT_FLOPPY_IRQ, floppy_irq );
+
+	unsigned int page_count = (FLOPPY_DMALEN + PAGE_SIZE - 1) / PAGE_SIZE;
+	floppy_dmabuf_virtual = (unsigned char*)mm::alloc_pages_dma( page_count, 64 );
+	floppy_dmabuf_physical = mm::kernel_virtual_to_physical( floppy_dmabuf_virtual );
 }

@@ -24,7 +24,7 @@ namespace mm
 		uintptr_t	alloc( unsigned int pages = 1, unsigned int align = 1 );
 		uintptr_t	alloc_himem( unsigned int pages = 1, unsigned int align = 1 );
 
-		void		free( uintptr_t physical_addr );
+		void		free( uintptr_t physical_addr, unsigned int pages );
 	}
 }
 

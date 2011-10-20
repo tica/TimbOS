@@ -47,11 +47,14 @@ void mm::paging::init( uintptr_t linear_mapping_end, uintptr_t virtual_base )
 		pde.enable4m = 1;
 		pde.writable = 1;
 		pde.present = 1;
+		pde.user = 1; // HACK!
 		pde.page_frame_addr = p >> LARGE_PAGE_SHIFT;
+
+		invlpg( virt );
 	}
 
-	KernelPageDirectory[0x000].user = 1;
-	KernelPageDirectory[0x300].user = 1;
+	// Un-map first page (was used by bootloader)
+	//KernelPageDirectory[0x000].present = 0;
 
 	/*
 	for( int i = 0; i < 16; ++i )
@@ -72,6 +75,12 @@ void mm::paging::init( uintptr_t linear_mapping_end, uintptr_t virtual_base )
 
 	KernelPageDirectory[0] = pde;
 	*/
+}
+
+void mm::paging::init_unmap_0()
+{
+	KernelPageDirectory[0x000].present = 0;
+	invlpg( 0 );
 }
 
 extern CONSOLE console;

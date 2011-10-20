@@ -57,15 +57,13 @@ static uint8_t __ATTRIBUTE_PAGEALIGN__ stackAk[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackB[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackBk[4096];
 */
+/*
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackC[4096];
 static uint8_t __ATTRIBUTE_PAGEALIGN__ stackCk[4096];
+*/
 
+void floppy_init();
 void floppy_test();
-cpu_state* floppy_irq( cpu_state* regs )
-{
-	console.printf( "floppy irq!\n" );
-	return regs;
-}
 
 void parse_command_line( multiboot_info* mbt )
 {
@@ -99,18 +97,22 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 
 	//mm::paging::paging_build_kernel_table( &virtual_mbt->u.elf_sec, 0xC0000000 );
 
+#if 0
 	mm::paging::paging_test();
+#endif
 
+#if 0
 	for( int i = 0; i < 5; ++i )
 		console.printf( "pmem_alloc() = %x, pmem_alloc_dma() = %x\n", mm::alloc_pages(1,1), mm::alloc_pages_dma( 32, 32 ) );
+#endif
 
-	void* ptrlist[25];
+#if 0
+	void* ptrlist[1024];
 
 	memtest:
-
 	for( unsigned int i = 0; i < _countof(ptrlist); ++i )
 	{
-		size_t sz = i * 4;
+		size_t sz = 64; //i * 64;
 		void* p = mm::heap::alloc( sz );
 
 		debug_bochs_printf( "mm::heap::alloc( %x ) = %x\n", sz, p );
@@ -126,16 +128,20 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	}
 
 	goto memtest;
+#endif
+
+	scheduler::init();
+	floppy_init();	
+
+	debug_bochs_printf( "\n\nAbout to enable interrupts... crashing???\n" );
+	interrupts_enable();
+	debug_bochs_printf( "Not yet!\n\n" );
 	
 	console.printf( "idle\n" );
-	while( 1 );
 
-	scheduler::new_task( stackC, stackCk, (void*)floppy_test );
-	irq::install_handler( 0, scheduler::next );
-	irq::install_handler( 6, floppy_irq );
-
-	debug_bochs_printf( "\n\nCrashing?\n\n" );
-	interrupts_enable();
+	scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );	
+	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'A'> );
+	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'B'> );
 
 	// stay!
 	while( 1 )

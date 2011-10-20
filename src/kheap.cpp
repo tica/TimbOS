@@ -96,14 +96,16 @@ private:
 		object_count = payload_size / sizeof(heap_object<obj_size>)
 	};
 
-	TMyType*	_next;
-	TObject*	_first_free;
-	TObject		_objects[object_count];
+	TMyType*		_next;
+	TObject*		_first_free;
+	unsigned int	_free_count;
+	TObject			_objects[object_count];	
 
 public:
 	heap_chunk()
 		:	_next( 0 ),
-			_first_free( 0 )
+			_first_free( 0 ),
+			_free_count( object_count )
 	{		
 		TObject* next = new (&_objects[object_count-1]) TObject( 0 );		
 
@@ -119,6 +121,8 @@ public:
 	{
 		void* ptr = _first_free->alloc( &_first_free );
 
+		--_free_count;
+
 		//debug_bochs_printf( "allocated mem from chunk (obj_size = %d, object_count = %d) @ %x, new first_free = %x\n", obj_size, object_count, ptr, _first_free );
 		return ptr;
 	}
@@ -127,6 +131,8 @@ public:
 	{
 		TObject* obj = reinterpret_cast<TObject*>( uintptr_t(ptr) - sizeof(heap_object<0>) );
 		obj->free( &_first_free );
+
+		++_free_count;
 		
 		//debug_bochs_printf( "freed object, _first_free = %x\n", _first_free );
 	}
@@ -144,6 +150,11 @@ public:
 	bool	full()
 	{
 		return _first_free == 0;
+	}
+
+	bool	empty()
+	{
+		return _free_count == object_count;
 	}
 };
 
@@ -205,15 +216,42 @@ public:
 
 		chunk->free( ptr );
 
-		if( was_full )
+		if( chunk->empty() )
 		{
-			// FIXME: Skip is completely freed?
+			debug_bochs_printf( "KILL PAGE\n" );
 
+			if( !was_full )
+			{
+				if( chunk == _first_chunk )
+				{
+					_first_chunk = chunk->next();
+				}
+				else
+				{
+					TChunk* ch = _first_chunk;
+					while( ch && ch->next() != chunk )
+						ch = ch->next();
+
+					if( ch )
+					{
+						ch->chain( chunk->next() );
+					}
+					else
+					{
+						PANIC( "huh?! where has my half-full chunk gone?!\n" );
+					}
+				}
+			}
+
+			mm::free_pages( chunk, page_count );
+		}
+		else if( was_full )
+		{
 			// lock?
 			chunk->chain( _first_chunk );
 			_first_chunk = chunk;
 			// unlock?
-		}
+		}		
 	}
 
 	virtual size_t	object_size()
@@ -250,16 +288,16 @@ static heap_chunk_group<64, 1>			heap_chunk_group_64;
 static heap_chunk_group<128, 1>			heap_chunk_group_128;
 static heap_chunk_group<256, 1>			heap_chunk_group_256;
 static heap_chunk_group<512, 1>			heap_chunk_group_512;
-static heap_chunk_group<1024-12, 1>		heap_chunk_group_1024;
-static heap_chunk_group<2048-12, 1>		heap_chunk_group_2048;
-static heap_chunk_group<4096-16, 1>		heap_chunk_group_4096;
-static heap_chunk_group<8192-16, 2>		heap_chunk_group_8192;
-static heap_chunk_group<16384-16, 4>	heap_chunk_group_16384;
-static heap_chunk_group<32768-16, 8>	heap_chunk_group_32768;
-static heap_chunk_group<65536-16, 16>	heap_chunk_group_65536;
-static heap_chunk_group<131072-16, 32>	heap_chunk_group_131072;
-static heap_chunk_group<262144-16, 64>	heap_chunk_group_262144;
-static heap_chunk_group<524288-16, 128>	heap_chunk_group_524288;
+static heap_chunk_group<1024-16, 1>		heap_chunk_group_1024;
+static heap_chunk_group<2048-16, 1>		heap_chunk_group_2048;
+static heap_chunk_group<4096-20, 1>		heap_chunk_group_4096;
+static heap_chunk_group<8192-20, 2>		heap_chunk_group_8192;
+static heap_chunk_group<16384-20, 4>	heap_chunk_group_16384;
+static heap_chunk_group<32768-20, 8>	heap_chunk_group_32768;
+static heap_chunk_group<65536-20, 16>	heap_chunk_group_65536;
+static heap_chunk_group<131072-20, 32>	heap_chunk_group_131072;
+static heap_chunk_group<262144-20, 64>	heap_chunk_group_262144;
+static heap_chunk_group<524288-20, 128>	heap_chunk_group_524288;
 
 static iheap_chunk_group*	s_heap_chunk_groups[] =
 {

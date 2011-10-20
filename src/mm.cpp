@@ -80,6 +80,8 @@ void mm::init( const multiboot_info* mbt_info )
 
 	physical::init( mbt_info, kernel_static_end, kernel_dynamic_end, himem_end );
 	heap::init();
+
+	paging::init_unmap_0();
 }
 
 void*	mm::alloc_pages_dma( unsigned int count, unsigned int align )
@@ -87,7 +89,7 @@ void*	mm::alloc_pages_dma( unsigned int count, unsigned int align )
 	uintptr_t physical_addr = physical::alloc_dma( count, align );
 	if( physical_addr )
 	{
-		return reinterpret_cast<void*>( KERNEL_VIRTUAL_BASE + physical_addr );
+		return kernel_physical_to_virtual( physical_addr );
 	}
 
 	return 0;
@@ -98,7 +100,7 @@ void*	mm::alloc_pages( unsigned int count, unsigned int align )
 	uintptr_t physical_addr = physical::alloc( count, align );
 	if( physical_addr )
 	{
-		return reinterpret_cast<void*>( KERNEL_VIRTUAL_BASE + physical_addr );
+		return kernel_physical_to_virtual( physical_addr );
 	}
 
 	return 0;
@@ -107,4 +109,19 @@ void*	mm::alloc_pages( unsigned int count, unsigned int align )
 uintptr_t	mm::alloc_pages_himem( unsigned int count, unsigned int align )
 {
 	return physical::alloc_himem( count, align );
+}
+
+void	mm::free_pages( void* addr, unsigned int count )
+{
+	mm::physical::free( kernel_virtual_to_physical(addr), count );
+}
+
+uintptr_t	mm::kernel_virtual_to_physical( void* p )
+{
+	return uintptr_t(p) - KERNEL_VIRTUAL_BASE;
+}
+
+void*		mm::kernel_physical_to_virtual( uintptr_t p )
+{
+	return reinterpret_cast<void*>( p + KERNEL_VIRTUAL_BASE );
 }

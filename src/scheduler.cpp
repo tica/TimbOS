@@ -5,6 +5,8 @@
 #include "lib/memory.h"
 #include "debug.h"
 #include "gdt.h"
+#include "irq.h"
+#include "mm.h"
 
 enum TASK_STATE
 {
@@ -25,8 +27,21 @@ static struct Task s_tasks[MAX_TASK_COUNT] = {};
 static unsigned int s_task_count = 0;
 static unsigned int s_current_task = (unsigned)-1;
 
-struct cpu_state* scheduler::next(struct cpu_state* regs)
+namespace scheduler
 {
+	cpu_state*	next(cpu_state* regs);
+}
+
+void	scheduler::init()
+{		
+	irq::install_handler( 0, scheduler::next );
+}
+
+cpu_state*	scheduler::next(cpu_state* regs)
+{
+	if( s_task_count == 0 )
+		return regs;
+
 	if( s_current_task < s_task_count )
 	{
 		s_tasks[s_current_task].cpu_state = regs;
@@ -39,9 +54,10 @@ struct cpu_state* scheduler::next(struct cpu_state* regs)
 	return s_tasks[s_current_task].cpu_state;
 }
 
-void scheduler::new_task( void* kernel_stack, void* user_stack, void* entry )
+void scheduler::new_task( void* user_stack, void* entry )
 {
-	uint8_t* kernel_stack_end = ((uint8_t*)kernel_stack) + 4096;
+	uint8_t* kernel_stack = (uint8_t*)mm::alloc_pages();
+	uint8_t* kernel_stack_end = kernel_stack + 4096;
 	uint8_t* user_stack_end = ((uint8_t*)user_stack) + 4096;
 
 	struct cpu_state* regs = reinterpret_cast<struct cpu_state*>( kernel_stack_end - sizeof(struct cpu_state) );

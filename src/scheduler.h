@@ -4,8 +4,9 @@
 
 namespace scheduler
 {
-	struct cpu_state* next(struct cpu_state* regs);
-	void new_task( void* stack, void* user_stack, void* entry );
+	void	init();
+
+	void	new_task( void* user_stack, void* entry );
 }
 
 #endif
