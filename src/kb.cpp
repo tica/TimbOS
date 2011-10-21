@@ -1,4 +1,3 @@
-
 #include "system.h"
 #include "kb.h"
 
@@ -95,11 +94,7 @@ unsigned char kbdus_upper[128] =
 	0,	/* All other keys are undefined */
 };
 
-extern void print_char( char ch );
-
-unsigned char last_scancode = 0x0;
-
-bool shift = false;
+static bool shift = false;
 
 /* Handles the keyboard interrupt */
 struct cpu_state* keyboard_handler(struct cpu_state *r)
