@@ -20,6 +20,11 @@ inline void*	operator new( size_t size )
 	return mm::heap::alloc( size );
 }
 
+inline void*	operator new[]( size_t size )
+{
+	return mm::heap::alloc( size );
+}
+
 inline void operator delete( void* ptr )
 {
 	return mm::heap::free( ptr );

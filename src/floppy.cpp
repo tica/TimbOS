@@ -574,7 +574,7 @@ void floppy_test()
 	//r = floppy_read_track( floppy_base, 0 );
 	//TRACE1( r );
 
-	unsigned char buf[2048];
+	unsigned char* buf = new unsigned char[2048];
 	r = floppy_read_sectors( floppy_base, 0, 4, (unsigned char*)buf );
 
 	DUMP(buf, 0x400);
