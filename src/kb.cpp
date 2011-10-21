@@ -94,7 +94,7 @@ unsigned char kbdus_upper[128] =
 };
 
 //German Layout
-unsigned char kbger[128] =
+unsigned char kbdger[128] =
 {
 	0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
 	'9', '0', 'ß', '´', '\b',	/* Backspace */
@@ -134,7 +134,7 @@ unsigned char kbger[128] =
 	0,	/* All other keys are undefined */
 };
 
-unsigned char kbger_upper[128] =
+unsigned char kbdger_upper[128] =
 {
 	0,  27, '!', '"', '§', '$', '%', '&', '/', '(',	/* 9 */
 	')', '=', '?', '`', '\b',	/* Backspace */
@@ -220,11 +220,11 @@ struct cpu_state* keyboard_handler(struct cpu_state *r)
 		{
 			if(!shift)
 			{
-				console.printf( "%c", kbger[scancode] );
+				console.printf( "%c", kbdger[scancode] );
 			}
 			else
 			{
-				console.printf( "%c", kbger_upper[scancode] );
+				console.printf( "%c", kbdger_upper[scancode] );
 			}
 		}
     }
