@@ -128,7 +128,7 @@ struct cpu_state* keyboard_handler(struct cpu_state *r)
 
 		//2a = left shift
 		//3a = capslock
-		// 36 = right shift
+		//36 = right shift
 		if(scancode == 0x2a || scancode == 0x36)
 			shift = true;
 
