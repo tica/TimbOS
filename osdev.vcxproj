@@ -75,10 +75,10 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="rtl.h" />
     <ClInclude Include="src\blockdevice.h" />
     <ClInclude Include="src\console.h" />
     <ClInclude Include="src\debug.h" />
+    <ClInclude Include="src\devmanager.h" />
     <ClInclude Include="src\driverbase.h" />
     <ClInclude Include="src\drv.h" />
     <ClInclude Include="src\elf.h" />
@@ -89,7 +89,8 @@
     <ClInclude Include="src\irq.h" />
     <ClInclude Include="src\isr.h" />
     <ClInclude Include="src\kb.h" />
-    <ClInclude Include="src\lib\memory.h" />
+    <ClInclude Include="src\lib\minilibc\memory.h" />
+    <ClInclude Include="src\lib\minilibc\stddef.h" />
     <ClInclude Include="src\mbtutil.h" />
     <ClInclude Include="src\mm.h" />
     <ClInclude Include="src\mmdef.h" />
@@ -111,6 +112,12 @@
     <None Include="src\io_.s" />
     <None Include="src\irq_.s" />
     <None Include="src\isr_.s" />
+    <None Include="src\lib\ministl\cstddef" />
+    <None Include="src\lib\ministl\exception" />
+    <None Include="src\lib\ministl\initializer_list" />
+    <None Include="src\lib\ministl\list" />
+    <None Include="src\lib\ministl\new" />
+    <None Include="src\lib\ministl\type_traits" />
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
     <None Include="src\loader.s" />
@@ -132,7 +139,7 @@
     <ClCompile Include="src\isr.cpp" />
     <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
-    <ClCompile Include="src\lib\memory.cpp" />
+    <ClCompile Include="src\lib\minilibc\memory.cpp" />
     <ClCompile Include="src\mm.cpp" />
     <ClCompile Include="src\pagedir.cpp" />
     <ClCompile Include="src\paging.cpp" />

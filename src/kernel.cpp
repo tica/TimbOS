@@ -1,7 +1,7 @@
 
 #include "system.h"
 #include "video.h"
-#include "lib/memory.h"
+#include <memory.h>
 #include "console.h"
 #include "debug.h"
 #include "multiboot.h"
@@ -17,6 +17,8 @@
 #include "mm.h"
 #include "kheap.h"
 #include "drv.h"
+#include "devmanager.h"
+
 
 struct CONSOLE console;
 
@@ -51,17 +53,6 @@ void taskX( void )
 		}
 	}
 }
-
-/*
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackA[4096];
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackAk[4096];
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackB[4096];
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackBk[4096];
-*/
-/*
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackC[4096];
-static uint8_t __ATTRIBUTE_PAGEALIGN__ stackCk[4096];
-*/
 
 void floppy_init();
 void floppy_test();
@@ -193,8 +184,8 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	interrupts_enable();
 	debug_bochs_printf( "Not yet!\n\n" );
 
-	auto drvmgr = new drv::DriverManager;
-	drvmgr->probe_all();
+	drv::DeviceManager devmgr;
+	drv::manager::probe_all( devmgr );
 	
 	console.printf( "idle\n" );
 

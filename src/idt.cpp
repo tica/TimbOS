@@ -3,7 +3,7 @@
 #include "idt.h"
 
 #include "processor.h"
-#include "lib/memory.h"
+#include <memory.h>
 #include "debug.h"
 
 /* Defines an IDT entry */

@@ -40,6 +40,12 @@
     <Filter Include="core\drv\itf">
       <UniqueIdentifier>{3f72b418-10d8-411a-a083-c98ac4436c0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\minilibc">
+      <UniqueIdentifier>{e476ffb4-e71c-4748-a3b6-3bd72a4c126c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\ministl">
+      <UniqueIdentifier>{ae582a69-fbd6-48a7-9c60-b7570a051f09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -59,9 +65,6 @@
     </ClInclude>
     <ClInclude Include="src\system.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="rtl.h">
-      <Filter>lib</Filter>
     </ClInclude>
     <ClInclude Include="src\pagedir.h">
       <Filter>core\mm</Filter>
@@ -99,9 +102,6 @@
     <ClInclude Include="src\gdt.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\memory.h">
-      <Filter>lib</Filter>
-    </ClInclude>
     <ClInclude Include="src\mm.h">
       <Filter>core\mm</Filter>
     </ClInclude>
@@ -122,6 +122,15 @@
     </ClInclude>
     <ClInclude Include="src\blockdevice.h">
       <Filter>core\drv\itf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\devmanager.h">
+      <Filter>core\drv</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\minilibc\stddef.h">
+      <Filter>lib\minilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\minilibc\memory.h">
+      <Filter>lib\minilibc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +172,24 @@
     </None>
     <None Include="src\loader.s">
       <Filter>boot</Filter>
+    </None>
+    <None Include="src\lib\ministl\cstddef">
+      <Filter>lib\ministl</Filter>
+    </None>
+    <None Include="src\lib\ministl\exception">
+      <Filter>lib\ministl</Filter>
+    </None>
+    <None Include="src\lib\ministl\initializer_list">
+      <Filter>lib\ministl</Filter>
+    </None>
+    <None Include="src\lib\ministl\list">
+      <Filter>lib\ministl</Filter>
+    </None>
+    <None Include="src\lib\ministl\new">
+      <Filter>lib\ministl</Filter>
+    </None>
+    <None Include="src\lib\ministl\type_traits">
+      <Filter>lib\ministl</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -214,9 +241,6 @@
     <ClCompile Include="src\debug.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\memory.cpp">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="src\mm.cpp">
       <Filter>core\mm</Filter>
     </ClCompile>
@@ -228,6 +252,9 @@
     </ClCompile>
     <ClCompile Include="src\drvmanager.cpp">
       <Filter>core\drv</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\minilibc\memory.cpp">
+      <Filter>lib\minilibc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

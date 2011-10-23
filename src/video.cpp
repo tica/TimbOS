@@ -1,6 +1,6 @@
 
 #include "video.h"
-#include "lib/memory.h"
+#include <memory.h>
 #include "debug.h"
 #include "io.h"
 

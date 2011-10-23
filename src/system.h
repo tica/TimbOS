@@ -2,12 +2,7 @@
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-typedef unsigned long size_t;
-typedef unsigned long uintptr_t;
-
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef int int32_t;
+#include <stddef.h>
 
 struct cpu_state
 {

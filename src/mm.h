@@ -22,5 +22,8 @@ namespace mm
 
 	// This function returns physical addresses!
 	uintptr_t	alloc_pages_himem( unsigned int count = 1, unsigned int align = 1 );
+
+	// Calculate how many pages are needed to allocate a buffer of the given size
+	size_t	calc_required_page_count( size_t size );
 }
 

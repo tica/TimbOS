@@ -45,3 +45,18 @@ extern "C" void __cxa_pure_virtual()
 	debug_bochs_printf( "OMG pure virtual!?!??\n" );
 	while (1);
 }
+
+namespace std
+{
+	void __throw_length_error(char const*)
+	{
+	}
+}
+
+namespace std
+{
+	void __throw_bad_alloc()
+	{
+	}
+}
+

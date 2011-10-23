@@ -2,7 +2,7 @@
 #include "system.h"
 #include "scheduler.h"
 
-#include "lib/memory.h"
+#include <memory.h>
 #include "debug.h"
 #include "gdt.h"
 #include "irq.h"

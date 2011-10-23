@@ -24,7 +24,7 @@ C-DEPS		:= $(patsubst $(SRC-DIR)/%.c,$(OBJ-DIR)/%.d,$(C-SOURCES))
 CXX-DEPS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.d,$(CXX-SOURCES))
 
 C-FLAGS = -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin
-CXX-FLAGS = -MD -std=c++0x -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin -fno-rtti -fno-exceptions
+CXX-FLAGS = -I./src/lib/minilibc/  -I./src/lib/ministl/ -MD -std=c++0x -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin -fno-rtti -fno-exceptions
 
 
 all: $(FLOPPY-1440k-IMG)

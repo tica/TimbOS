@@ -8,6 +8,8 @@ namespace drv
 	{
 		struct IDriverBase
 		{
+			virtual ~IDriverBase() {}
+
 			virtual const char*	description() = 0;
 
 			virtual void		init() = 0;			

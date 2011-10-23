@@ -194,7 +194,6 @@ public:
 			void* obj = _first_chunk->alloc();
 			if( _first_chunk->full() )
 			{
-				debug_bochs_printf( "FULL\n" );
 				_first_chunk = _first_chunk->next();
 			}
 
@@ -202,7 +201,6 @@ public:
 		}
 		else
 		{
-			debug_bochs_printf( "ALLOC NEW\n" );
 			return alloc_from_new();
 		}
 	}

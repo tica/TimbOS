@@ -14,6 +14,11 @@ void* memcpy( void* destination, const void* source, size_t count )
 	return destination;
 }
 
+void* memmove( void* destination, const void* source, size_t count )
+{
+	return memcpy( destination, source, count );
+}
+
 void* memset( void* destination, unsigned char value, size_t count )
 {
 	unsigned char* dest = reinterpret_cast<unsigned char*>( destination );

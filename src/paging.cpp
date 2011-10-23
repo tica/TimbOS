@@ -4,13 +4,13 @@
 
 #include "mmdef.h"
 
-#include "lib/memory.h"
 #include "processor.h"
 #include "debug.h"
 #include "elf.h"
 #include "console.h"
 #include "mm.h"
 
+#include <memory.h>
 
 void invlpg( uintptr_t virtual_addr )
 {

@@ -11,9 +11,12 @@
 #include "irq.h"
 #include "debug.h"
 #include "io.h"
-#include "lib/memory.h"
+#include <memory.h>
 #include "console.h"
 extern CONSOLE console;
+
+class FloppyDrive;
+static FloppyDrive* floppy0;
 
 void timer_sleep( int ms10 )
 {
@@ -319,10 +322,8 @@ typedef enum {
 // and must not cross 64k borders so easiest thing is to align it
 // to 2^N boundary at least as big as the block
 #define FLOPPY_DMALEN 0x4800
-static unsigned char* floppy_dmabuf_virtual = 0;
-static uintptr_t floppy_dmabuf_physical = 0;
 
-static void floppy_dma_init(floppy_dir dir)
+static void floppy_dma_init(floppy_dir dir, uintptr_t floppy_dmabuf_physical)
 {
 
     union {
@@ -374,7 +375,7 @@ static void floppy_dma_init(floppy_dir dir)
 // It retries (a lot of times) on all errors except write-protection
 // which is normally caused by mechanical switch on the disk.
 //
-int floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
+int floppy_do_track(int base, unsigned cyl, floppy_dir dir, uintptr_t dma_buffer) {
     
     // transfer command, set below
     unsigned char cmd;
@@ -406,7 +407,7 @@ int floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
         floppy_motor(base, floppy_motor_on);
 
         // init dma..
-        floppy_dma_init(dir);
+        floppy_dma_init(dir, dma_buffer);
 
         timer_sleep(10); // give some time (100ms) to settle after the seeks
 
@@ -518,78 +519,10 @@ int floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
     return -1;
 }
 
-int cyl_cache_index = -1;
-
-int floppy_read_track(int base, unsigned cyl)
-{
-	cyl_cache_index = -1;
-
-    int r = floppy_do_track(base, cyl, floppy_dir_read);
-
-	if( r == 0 )
-		cyl_cache_index = cyl;
-
-	return r;
-}
-
-int floppy_read_sector(int base, unsigned int sector_index, void* buffer)
-{
-	int error = 0;
-
-	unsigned int cylinder = sector_index / (18 * 2);
-	unsigned int offset = (sector_index % (18 * 2)) * 512;
-
-	if( cylinder != (unsigned)cyl_cache_index )
-	{
-		error = floppy_read_track( base, cylinder );
-	}
-
-	if( !error )
-	{
-		memcpy( buffer, floppy_dmabuf_virtual + offset, 512 );	
-	}
-
-	return error;
-}
-
-int floppy_read_sectors(int base, unsigned int sector_index, unsigned int num_sectors, unsigned char* buffer)
-{
-	int error = 0;
-
-	for( unsigned int i = 0; i < num_sectors; ++i )
-	{
-		error = floppy_read_sector( base, sector_index + i, buffer + 512 * i );
-
-		if( error ) break;
-	}
-
-	return error;
-}
-
-void floppy_test()
-{
-	int r = floppy_reset( floppy_base );
-	TRACE1( r );
-
-	//r = floppy_read_track( floppy_base, 0 );
-	//TRACE1( r );
-
-	unsigned char buf[2048];
-	r = floppy_read_sectors( floppy_base, 0, 4, (unsigned char*)buf );
-
-	DUMP(buf, 0x400);
-	console.dump(buf, 0x100 );
-
-	while( 1 );
-}
 
 void floppy_init()
 {
 	irq::install_handler( DEFAULT_FLOPPY_IRQ, floppy_irq );
-
-	unsigned int page_count = (FLOPPY_DMALEN + PAGE_SIZE - 1) / PAGE_SIZE;
-	floppy_dmabuf_virtual = (unsigned char*)mm::alloc_pages_dma( page_count, 64 );
-	floppy_dmabuf_physical = mm::kernel_virtual_to_physical( floppy_dmabuf_virtual );
 }
 
 
@@ -612,8 +545,15 @@ public:
 
 	virtual void		init()
 	{
+		floppy_reset(_base);
 	}
 
+public:
+	int read_cyl( unsigned int cyl_index, uintptr_t dma_buffer )
+	{
+		TRACE2( cyl_index, dma_buffer );
+		return floppy_do_track(_base, cyl_index, floppy_dir_read, dma_buffer);
+	}
 };
 
 class FloppyDrive
@@ -623,12 +563,47 @@ class FloppyDrive
 	FloppyDriveType		_type;
 	FloppyController*	_controller;
 
+	uint8_t*			_cyl_cache;
+	uintptr_t			_cyl_cache_physical;
+	int					_cached_cyl_index;
+
+	unsigned int	sectors_per_cyl()
+	{
+		switch( _type )
+		{
+		case FloppyDrive1_2M:
+			return 15 * 2;
+		case FloppyDrive1_44M:
+			return 18 * 2;
+		case FloppyDriveNone:
+		case FloppyDrive360k:
+		case FloppyDrive720k:
+		case FloppyDrive2_88M:
+		default:
+			return 0;
+		}
+	}
+
+	unsigned int	cyl_size()
+	{
+		return sectors_per_cyl() * block_size();
+	}
+
 public:
 	FloppyDrive( unsigned int drive_idx, FloppyDriveType type, FloppyController* controller )
 		:	_idx( drive_idx ),
 			_type( type ),
-			_controller( controller )
+			_controller( controller ),
+			_cached_cyl_index( -1 )
 	{
+		size_t cache_page_count = mm::calc_required_page_count( cyl_size() );
+		_cyl_cache = (uint8_t*)mm::alloc_pages_dma( cache_page_count, 16 /* 64K */ );
+		_cyl_cache_physical = mm::kernel_virtual_to_physical( _cyl_cache );
+	}
+
+	~FloppyDrive()
+	{
+		mm::free_pages( _cyl_cache );
 	}
 
 	// IDriverBase
@@ -651,9 +626,8 @@ public:
 		switch( _type )
 		{		
 		case FloppyDrive1_2M:
-			return 80 * 15 * 2;			
 		case FloppyDrive1_44M:
-			return 80 * 18 * 2;
+			return 80 * sectors_per_cyl();
 		case FloppyDriveNone:
 		case FloppyDrive360k:
 		case FloppyDrive720k:
@@ -665,10 +639,15 @@ public:
 
 	virtual bool	read( unsigned int first_block_index, unsigned int block_count, void* buffer )
 	{
-		(void)first_block_index;
-		(void)block_count;
-		(void)buffer;
-		return false;
+		TRACE3( first_block_index, block_count, buffer );
+
+		for( unsigned int i = 0; i < block_count; ++i )
+		{
+			if( !read_block( first_block_index + i, ((uint8_t*)buffer) + block_size() * i ) )
+				return false;
+		}
+
+		return true;
 	}
 	virtual bool	write( unsigned int first_block_index, unsigned int block_count, const void* buffer )
 	{
@@ -677,9 +656,33 @@ public:
 		(void)buffer;
 		return false;
 	}
+
+private:
+	bool	read_block( unsigned int block_index, void* buffer )
+	{
+		TRACE2( block_index, buffer );
+
+		int error = 0;
+
+		unsigned int cylinder = block_index / sectors_per_cyl();
+		unsigned int offset = (block_index % sectors_per_cyl()) * block_size();
+
+		if( cylinder != (unsigned)_cached_cyl_index )
+		{
+			error = _controller->read_cyl( cylinder, _cyl_cache_physical );
+			_cached_cyl_index = cylinder;
+		}
+
+		if( !error )
+		{
+			memcpy( buffer, _cyl_cache + offset, block_size() );	
+		}
+
+		return error == 0;
+	}
 };
 
-void floppy_probe( drv::DriverManager& )
+void floppy_probe( drv::DeviceManager& )
 {
 	outportb( 0x70, 0x10 );
 	uint8_t driveTypes = inportb( 0x71 );
@@ -693,8 +696,7 @@ void floppy_probe( drv::DriverManager& )
 
 		if( driveType0 )
 		{
-			auto floppy0 = new FloppyDrive( 0, driveType0, controller );
-			(void)floppy0;
+			floppy0 = new FloppyDrive( 0, driveType0, controller );
 		}
 		if( driveType1 )
 		{
@@ -707,3 +709,18 @@ void floppy_probe( drv::DriverManager& )
 
 drv::REGISTER_DRIVER_PROBE( floppy_probe );
 
+void floppy_test()
+{
+	//r = floppy_read_track( floppy_base, 0 );
+	//TRACE1( r );
+
+	unsigned char* buf = new unsigned char[1024 * 32];
+	floppy0->read( 0, 2 * 32, buf );
+
+	//r = floppy_read_sectors( floppy_base, 0, 128, buf );
+
+	DUMP(buf, 1024);
+	//console.dump(buf, 0x100 );
+
+	while( 1 );
+}

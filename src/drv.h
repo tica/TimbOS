@@ -4,28 +4,26 @@
 
 namespace drv
 {
-	class DriverManager;
-	typedef void (*devprobe_func)( drv::DriverManager& drvmgr );
+	class DeviceManager;
+	typedef void (*devprobe_func)( drv::DeviceManager& devmgr );
 
-	class DriverManager
+	namespace manager
 	{
-		static void	regProbeFunc( drv::devprobe_func probe_func );
-	public:
+		void	reg_probe( drv::devprobe_func probe_func );
+		void	probe_all( DeviceManager& devmgr );
+
 		struct REGISTER_DRIVER
 		{
 			REGISTER_DRIVER( devprobe_func func )
 			{
-				DriverManager::regProbeFunc( func );
+				reg_probe( func );
 			}
 		};
-
-	public:
-		void	probe_all();	
 	};
 
 #define CONCAT_IMPL( x, y ) x##y
 #define MACRO_CONCAT( x, y ) CONCAT_IMPL( x, y )
-#define REGISTER_DRIVER_PROBE(func) DriverManager::REGISTER_DRIVER MACRO_CONCAT(_probe_reg,__COUNTER__)(func)
+#define REGISTER_DRIVER_PROBE(func) manager::REGISTER_DRIVER MACRO_CONCAT(_probe_reg,__COUNTER__)(func)
 }
 
 #endif

@@ -125,3 +125,8 @@ void*		mm::kernel_physical_to_virtual( uintptr_t p )
 {
 	return reinterpret_cast<void*>( p + KERNEL_VIRTUAL_BASE );
 }
+
+size_t		mm::calc_required_page_count( size_t size )
+{
+	return (size + PAGE_SIZE - 1) / PAGE_SIZE;
+}
