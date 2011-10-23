@@ -75,55 +75,31 @@ void parse_command_line( multiboot_info* mbt )
 void sparta()
 {
 	//first line
-	console.printf( "\x0c9");
-	for( int i = 0; i < 30; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf( "\x0cb");
-	for( int i = 0; i < 16; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf( "\x0cb");
-	for( int i = 0; i < 30; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf( "\x0bb");
+	console.printf( "\x0c9" );
+	console.printn( '\x0cd', 30 );
+	console.printf( "\x0cb" );
+	console.printn( '\x0cd', 16 );
+	console.printf( "\x0cb" );
+	console.printn( '\x0cd', 30 );
+	console.printf( "\x0bb" );
 
 	//second line
-	console.printf( "\x0ba\x0b0\x0b0\x0b0\x0b1\x0b1\x0b1\x0b2\x0b2\x0b2");
-	for( int i = 0; i < 12; i++)
-	{
-		console.printf("\x0db");
-	}
-	console.printf( "\x0b2\x0b2\x0b2\x0b1\x0b1\x0b1\x0b0\x0b0\x0b0\x0ba");
-	console.printf("\x0afThis is TimbOS\x0ae");
-	console.printf( "\x0ba\x0b0\x0b0\x0b0\x0b1\x0b1\x0b1\x0b2\x0b2\x0b2");
-	for( int i = 0; i < 12; i++)
-	{
-		console.printf("\x0db");
-	}
-	console.printf( "\x0b2\x0b2\x0b2\x0b1\x0b1\x0b1\x0b0\x0b0\x0b0\x0ba");
+	console.printf( "\x0ba\x0b0\x0b0\x0b0\x0b1\x0b1\x0b1\x0b2\x0b2\x0b2" );
+	console.printn( '\x0db', 12 );
+	console.printf( "\x0b2\x0b2\x0b2\x0b1\x0b1\x0b1\x0b0\x0b0\x0b0\x0ba" );
+	console.printf( "\x0afThis is TimbOS\x0ae" );
+	console.printf( "\x0ba\x0b0\x0b0\x0b0\x0b1\x0b1\x0b1\x0b2\x0b2\x0b2" );
+	console.printn( '\x0db', 12 );
+	console.printf( "\x0b2\x0b2\x0b2\x0b1\x0b1\x0b1\x0b0\x0b0\x0b0\x0ba" );
 
 	//third line
-	console.printf( "\x0c8");
-	for( int i = 0; i < 30; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf( "\x0ca");
-	for( int i = 0; i < 16; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf( "\x0ca");
-	for( int i = 0; i < 30; i++)
-	{
-		console.printf("\x0cd");
-	}
-	console.printf("\x0bc");
+	console.printf( "\x0c8" );
+	console.printn( '\x0cd', 30 );
+	console.printf( "\x0ca" );
+	console.printn( '\x0cd', 16 );
+	console.printf( "\x0ca" );
+	console.printn( '\x0cd', 30 );
+	console.printf( "\x0bc" );
 }
 
 extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )

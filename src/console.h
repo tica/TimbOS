@@ -24,6 +24,7 @@ public:
 	CONSOLE();
 public:
 	void printf( const char* format, ... );
+	void printn( const char ch, size_t count );
 	void dump( const void* mem, size_t len );
 
 private:

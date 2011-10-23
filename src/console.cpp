@@ -70,8 +70,22 @@ void CONSOLE::printf( const char* format, ... )
 {
 	va_list ap;
 	va_start( ap, format );	
-	format_string_varg( CONSOLE::write_char_to_console, (void*)this, format, ap );	
+	format_string_varg( CONSOLE::write_char_to_console, this, format, ap );	
 	va_end( ap );
+
+	if( this->visible )
+	{
+		video_display( this->buffer + this->top_row * this->buffer_width );
+		video_move_cursor( this->cursor_column, this->cursor_row - this->top_row );
+	}
+}
+
+void CONSOLE::printn( const char ch, size_t count )
+{
+	for( size_t i = 0; i < count; ++i )
+	{
+		write_char_to_console( ch, this );
+	}
 
 	if( this->visible )
 	{
