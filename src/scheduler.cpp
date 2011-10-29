@@ -2,11 +2,14 @@
 #include "system.h"
 #include "scheduler.h"
 
-#include <memory.h>
 #include "debug.h"
 #include "gdt.h"
 #include "irq.h"
 #include "mm.h"
+
+#include <list>
+#include <cstddef>
+#include <memory.h>
 
 enum TASK_STATE
 {
@@ -19,13 +22,17 @@ struct Task
 {
 	void*				kernel_stack;
 	struct cpu_state*	cpu_state;
+
+	Task( void* kstack, struct cpu_state* cpu )
+		:	kernel_stack( kstack ),
+			cpu_state( cpu )
+	{
+	}
 };
 
-const unsigned int MAX_TASK_COUNT = 4;
+static std::list<Task*>				s_task_list;
+static std::list<Task*>::iterator	s_current_task_it = s_task_list.end();
 
-static struct Task s_tasks[MAX_TASK_COUNT] = {};
-static unsigned int s_task_count = 0;
-static unsigned int s_current_task = (unsigned)-1;
 
 namespace scheduler
 {
@@ -39,19 +46,20 @@ void	scheduler::init()
 
 cpu_state*	scheduler::next(cpu_state* regs)
 {
-	if( s_task_count == 0 )
+	if( s_task_list.empty() )
 		return regs;
 
-	if( s_current_task < s_task_count )
+	if( s_current_task_it != s_task_list.end() )
 	{
-		s_tasks[s_current_task].cpu_state = regs;
+		(*s_current_task_it)->cpu_state = regs;
 	}
+	
+	if( ++s_current_task_it == s_task_list.end() )
+		s_current_task_it = s_task_list.begin();
 
-	s_current_task = (s_current_task + 1) % s_task_count;
+	gdt::update_tss_esp0( (*s_current_task_it)->kernel_stack );
 
-	gdt::update_tss_esp0( (uintptr_t)s_tasks[s_current_task].kernel_stack );
-
-	return s_tasks[s_current_task].cpu_state;
+	return (*s_current_task_it)->cpu_state;
 }
 
 void scheduler::new_task( void* user_stack, void* entry )
@@ -85,7 +93,6 @@ void scheduler::new_task( void* user_stack, void* entry )
 
 	regs->eflags = 0x0202;
 
-	s_tasks[s_task_count].kernel_stack = kernel_stack_end;
-	s_tasks[s_task_count].cpu_state = regs;
-	s_task_count += 1;
+	Task* task = new Task( kernel_stack_end, regs );
+	s_task_list.push_back( task );
 }
