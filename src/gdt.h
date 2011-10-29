@@ -5,7 +5,7 @@
 namespace gdt
 {
 	void init();
-	void update_tss_esp0( uintptr_t esp0 );
+	void update_tss_esp0( void* esp0 );
 }
 
 #endif

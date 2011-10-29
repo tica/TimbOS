@@ -79,11 +79,15 @@
     <ClInclude Include="src\console.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\devmanager.h" />
+    <ClInclude Include="src\diskcacheimpl.h" />
     <ClInclude Include="src\driverbase.h" />
     <ClInclude Include="src\drv.h" />
     <ClInclude Include="src\elf.h" />
+    <ClInclude Include="src\FAT12FileSystem.h" />
     <ClInclude Include="src\format.h" />
+    <ClInclude Include="src\fs.h" />
     <ClInclude Include="src\gdt.h" />
+    <ClInclude Include="src\diskcache.h" />
     <ClInclude Include="src\idt.h" />
     <ClInclude Include="src\io.h" />
     <ClInclude Include="src\irq.h" />
@@ -129,7 +133,10 @@
     <ClCompile Include="src\console.cpp" />
     <ClCompile Include="src\cppsupp.cpp" />
     <ClCompile Include="src\debug.cpp" />
+    <ClCompile Include="src\devmanager.cpp" />
+    <ClCompile Include="src\diskcacheimpl.cpp" />
     <ClCompile Include="src\drvmanager.cpp" />
+    <ClCompile Include="src\FAT12FileSystem.cpp" />
     <ClCompile Include="src\floppy.cpp" />
     <ClCompile Include="src\format.cpp" />
     <ClCompile Include="src\gdt.cpp" />

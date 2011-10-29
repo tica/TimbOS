@@ -78,7 +78,7 @@ void gdt::init()
 	debug_bochs_printf( "done\n" );
 }
 
-void gdt::update_tss_esp0( uintptr_t esp0 )
+void gdt::update_tss_esp0( void* esp0 )
 {
-	tss[1] = esp0;
+	tss[1] = (uint32_t)esp0;
 }

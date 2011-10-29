@@ -18,9 +18,8 @@
 #include "kheap.h"
 #include "drv.h"
 #include "devmanager.h"
-
-
-struct CONSOLE console;
+#include "diskcache.h"
+#include "FAT12FileSystem.h"
 
 extern "C" void gdt_install( void );
 
@@ -165,7 +164,25 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	
 	console.printf( "idle\n" );
 
-	scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );	
+	auto floppy0 = devmgr.floppy0_cache();
+	auto bootSect = floppy0->cache( 0, 1 );
+	bootSect->lock();
+
+	auto fs = fs::FAT12FileSystem::tryCreate( floppy0, bootSect );
+	
+	auto root = fs->root_directory();
+
+	fs::IFile* file;
+	while( root->next( &file ) )
+	{
+		debug_bochs_printf( "root->next returned true\n" );
+	}
+	debug_bochs_printf( "root->next returned false\n" );
+
+	bootSect->unlock();
+
+
+	//scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'A'> );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'B'> );
 

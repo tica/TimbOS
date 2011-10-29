@@ -4,6 +4,7 @@
 #include "drv.h"
 #include "driverbase.h"
 #include "blockdevice.h"
+#include "devmanager.h"
 
 #include "mmdef.h"
 #include "mm.h"
@@ -13,7 +14,6 @@
 #include "io.h"
 #include <memory.h>
 #include "console.h"
-extern CONSOLE console;
 
 class FloppyDrive;
 static FloppyDrive* floppy0;
@@ -682,7 +682,7 @@ private:
 	}
 };
 
-void floppy_probe( drv::DeviceManager& )
+void floppy_probe( drv::DeviceManager& mgr )
 {
 	outportb( 0x70, 0x10 );
 	uint8_t driveTypes = inportb( 0x71 );
@@ -690,6 +690,7 @@ void floppy_probe( drv::DeviceManager& )
 	if( driveTypes )
 	{
 		auto controller = new FloppyController( 0x03f0 );
+		mgr.add_device( controller );
 
 		FloppyDriveType driveType0 = (FloppyDriveType)(driveTypes >> 4);
 		FloppyDriveType driveType1 = (FloppyDriveType)(driveTypes & 0xF);
@@ -697,6 +698,7 @@ void floppy_probe( drv::DeviceManager& )
 		if( driveType0 )
 		{
 			floppy0 = new FloppyDrive( 0, driveType0, controller );
+			mgr.add_device( floppy0 );
 		}
 		if( driveType1 )
 		{

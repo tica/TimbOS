@@ -31,4 +31,6 @@ private:
 	void move_cursor( int x, int y );
 };
 
+extern struct CONSOLE console;
+
 #endif // _CONSOLE_H_

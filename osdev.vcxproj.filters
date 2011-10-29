@@ -46,6 +46,12 @@
     <Filter Include="lib\ministl">
       <UniqueIdentifier>{ae582a69-fbd6-48a7-9c60-b7570a051f09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\drv\diskcache">
+      <UniqueIdentifier>{9d4564ad-3c9d-42bd-bfdb-c4afd1a27aad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\fs">
+      <UniqueIdentifier>{75fe605f-2e60-48dc-85f7-0a5440431158}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -131,6 +137,18 @@
     </ClInclude>
     <ClInclude Include="src\lib\minilibc\memory.h">
       <Filter>lib\minilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\diskcacheimpl.h">
+      <Filter>core\drv\diskcache</Filter>
+    </ClInclude>
+    <ClInclude Include="src\diskcache.h">
+      <Filter>core\drv\itf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fs.h">
+      <Filter>core\fs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12FileSystem.h">
+      <Filter>core\fs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +273,15 @@
     </ClCompile>
     <ClCompile Include="src\lib\minilibc\memory.cpp">
       <Filter>lib\minilibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\devmanager.cpp">
+      <Filter>core\drv</Filter>
+    </ClCompile>
+    <ClCompile Include="src\diskcacheimpl.cpp">
+      <Filter>core\drv\diskcache</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FAT12FileSystem.cpp">
+      <Filter>core\fs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,6 +6,8 @@
 
 #include <memory.h>
 
+struct CONSOLE console;
+
 CONSOLE::CONSOLE()
 {
 	static struct VIDEO_CHAR s_buffer[80 * 25 * 100] = {};
