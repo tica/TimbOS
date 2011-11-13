@@ -49,6 +49,38 @@ struct __ATTRIBUTE_PACKED__ FAT12_DirectoryEntry
 	unsigned int	FileSize;
 };
 
+class FAT12Directory
+	:	public IFile
+{
+	unsigned short _firstCluster;
+
+public:
+	FAT12Directory( unsigned short firstCluster )
+		:	_firstCluster( firstCluster )
+	{
+	}
+};
+
+static void extract_fn_part( char*& src, char*& dest, int count )
+{
+	for( int i = 0; i < count; ++i )
+	{
+		char ch = *src++;
+		if( ch != ' ' )
+			*dest++ = ch;
+	}
+}
+
+static void extract_file_name( char fn[11], char* dest )
+{
+	extract_fn_part( fn, dest, 8 );
+	*dest++ = '.';
+	extract_fn_part( fn, dest, 3 );
+
+	if( *(dest-1) == '.' )
+		*(dest-1) = 0;
+}
+
 class FAT12DirectoryEnumBase
 	:	public IDirectoryEnum
 {
@@ -92,8 +124,11 @@ public:
 				continue;
 			}
 
+			char buf[13] = {};
+			extract_file_name( entry.Name, buf );
+
 			debug_bochs_printf( "entry.Name[0] = %2x\n", entry.Name[0] );
-			debug_bochs_printf( "entry.Name = %s\n", entry.Name );
+			debug_bochs_printf( "entry.Name = %s\n", buf );
 			debug_bochs_printf( "entry.Attribute = %2x\n", entry.Attribute );
 			debug_bochs_printf( "entry.FileSize = %d\n", entry.FileSize );
 			debug_bochs_printf( "entry.FileSystemClusterLogical = %d\n", entry.FileSystemClusterLogical );
@@ -127,9 +162,6 @@ public:
 			_pRootDirectoryBuffer( pRootDirectoryBuffer )
 	{
 	}
-
-public:	
-
 private:
 	virtual void* lock_sector( unsigned int n )
 	{
