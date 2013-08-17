@@ -9,7 +9,7 @@ C-SOURCES	= $(shell find $(SRC-DIR) -type f -name '*.c')
 CXX-SOURCES	= $(shell find $(SRC-DIR) -type f -name '*.cpp')
 LINKER-LD	= $(SRC-DIR)/linker.ld
 
-TARGET-PLATFORM = i586-elf
+TARGET-PLATFORM = i686-elf
 TOOLS-PREFIX = /usr/local/cross/bin/$(TARGET-PLATFORM)-
 
 KERNEL-BIN			= $(BIN-DIR)/kernel.bin
@@ -23,8 +23,9 @@ CXX-OBJECTS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.o,$(CXX-SOURCES))
 C-DEPS		:= $(patsubst $(SRC-DIR)/%.c,$(OBJ-DIR)/%.d,$(C-SOURCES))
 CXX-DEPS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.d,$(CXX-SOURCES))
 
-C-FLAGS = -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin
-CXX-FLAGS = -I./src/lib/minilibc/  -I./src/lib/ministl/ -MD -std=c++0x -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin -fno-rtti -fno-exceptions
+COMMON-FLAGS = -I./src/lib/minilibc/ -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin
+C-FLAGS = $(COMMON-FLAGS)
+CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -std=c++0x -Wall -fno-rtti -fno-exceptions
 
 
 all: $(FLOPPY-1440k-IMG)
@@ -50,7 +51,7 @@ $(OBJ-DIR)/%.o : $(SRC-DIR)/%.s Makefile
 $(OBJ-DIR)/%.o: $(SRC-DIR)/%.c Makefile
 	@echo "[gcc]   $@ <= ($<)"
 	@mkdir -p $(dir $@)
-	@$(TOOLS-PREFIX)gcc -o $@ -c $< $(C-FLAGS)
+	$(TOOLS-PREFIX)gcc -o $@ -c $< $(C-FLAGS)
 	
 $(OBJ-DIR)/%.o : $(SRC-DIR)/%.cpp Makefile	
 	@echo "[g++]	$@ <= ($<)"

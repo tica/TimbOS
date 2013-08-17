@@ -21,6 +21,9 @@
 #include "diskcache.h"
 #include "FAT12FileSystem.h"
 
+
+#include "test/stl_test.h"
+
 extern "C" void gdt_install( void );
 
 
@@ -172,15 +175,19 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	
 	auto root = fs->root_directory();
 
-	fs::IFile* file;
+	fs::IFileSystemEntry* file;
+	//char file_name[20] = {};
 	while( root->next( &file ) )
 	{
 		debug_bochs_printf( "root->next returned true\n" );
+		debug_bochs_printf( "file = %p\n", file );
+		
 	}
 	debug_bochs_printf( "root->next returned false\n" );
 
 	bootSect->unlock();
 
+	test_stl();
 
 	//scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'A'> );

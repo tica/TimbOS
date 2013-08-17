@@ -6,9 +6,9 @@ namespace fs
 {
 	struct IDirectoryEnum;
 
-	struct IFile
+	struct IFileSystemEntry
 	{
-		virtual ~IFile() {}
+		virtual ~IFileSystemEntry() {}
 
 		virtual bool get_name( char* buf ) = 0;
 		virtual IDirectoryEnum* children() = 0;
@@ -19,7 +19,7 @@ namespace fs
 		virtual ~IDirectoryEnum() {}
 
 		virtual void reset() = 0;
-		virtual bool next( IFile** file ) = 0;
+		virtual bool next( IFileSystemEntry** file ) = 0;
 	};
 
 	struct IFileSystem
