@@ -43,14 +43,20 @@
     <Filter Include="lib\minilibc">
       <UniqueIdentifier>{e476ffb4-e71c-4748-a3b6-3bd72a4c126c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lib\ministl">
-      <UniqueIdentifier>{ae582a69-fbd6-48a7-9c60-b7570a051f09}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core\drv\diskcache">
       <UniqueIdentifier>{9d4564ad-3c9d-42bd-bfdb-c4afd1a27aad}</UniqueIdentifier>
     </Filter>
     <Filter Include="core\fs">
       <UniqueIdentifier>{75fe605f-2e60-48dc-85f7-0a5440431158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{8b724b0a-a431-4926-937c-b89fc51e2200}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\ministl">
+      <UniqueIdentifier>{33c295c6-f916-489c-ab64-3c9484aa4db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\ministl\impl">
+      <UniqueIdentifier>{0d6424ee-336c-48e6-8bb2-a2092d9e9426}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +156,12 @@
     <ClInclude Include="src\FAT12FileSystem.h">
       <Filter>core\fs</Filter>
     </ClInclude>
+    <ClInclude Include="src\lib\minilibc\stdint.h">
+      <Filter>lib\minilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test\stl_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\linker.ld">
@@ -191,23 +203,11 @@
     <None Include="src\loader.s">
       <Filter>boot</Filter>
     </None>
-    <None Include="src\lib\ministl\cstddef">
-      <Filter>lib\ministl</Filter>
+    <None Include="build\create-image.sh">
+      <Filter>build</Filter>
     </None>
-    <None Include="src\lib\ministl\exception">
-      <Filter>lib\ministl</Filter>
-    </None>
-    <None Include="src\lib\ministl\initializer_list">
-      <Filter>lib\ministl</Filter>
-    </None>
-    <None Include="src\lib\ministl\list">
-      <Filter>lib\ministl</Filter>
-    </None>
-    <None Include="src\lib\ministl\new">
-      <Filter>lib\ministl</Filter>
-    </None>
-    <None Include="src\lib\ministl\type_traits">
-      <Filter>lib\ministl</Filter>
+    <None Include="build\mtools.cfg">
+      <Filter>build</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +282,24 @@
     </ClCompile>
     <ClCompile Include="src\FAT12FileSystem.cpp">
       <Filter>core\fs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\minilibc\stdlib.cpp">
+      <Filter>lib\minilibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test\stl_test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\ministl\impl\functexcept.cpp">
+      <Filter>lib\ministl\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\ministl\impl\hashtable-aux.cpp">
+      <Filter>lib\ministl\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\ministl\impl\list.cpp">
+      <Filter>lib\ministl\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\ministl\impl\tree.cpp">
+      <Filter>lib\ministl\impl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

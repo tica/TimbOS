@@ -4,58 +4,87 @@
 #include "debug.h"
 
 #include <memory.h>
+#include <stdint.h>
 
 using namespace fs;
 
-struct __ATTRIBUTE_PACKED__ fs::FAT12_BootSector
+namespace fs
 {
-	unsigned short	JmpBootLow;
-	unsigned char	JmpBootHigh;
-	char			OSName[8];
-	unsigned short	BytesPerSector;
-	unsigned char	SectorsPerCluster;
-	unsigned short	ReservedSectorCount;
-	unsigned char	NumFATs;
-	unsigned short	RootEntityCount;
-	unsigned short	TotalSectorCount;
-	unsigned char	MediaType;
-	unsigned short	FATSize;
-	unsigned short	SectorsPerTrack;
-	unsigned short	NumHeads;
-	unsigned int	HiddenSectors;
-	unsigned int	TotalSectors32;
-	unsigned char	DriveNumber;
-	unsigned char	Reserved0;
-	unsigned char	Reserved1;
-	unsigned int	VolumeID;
-	unsigned char	Reserved2[11];
-	char			FileSystemType[8];
-	unsigned char	Reserved3[450];
-};
+	namespace lowlevel
+	{
+		enum FAT12Attributes
+		{
+			ATTR_READ_ONLY = 0x01,
+			ATTR_HIDDEN = 0x02,
+			ATTR_SYSTEM = 0x04,
+			ATTR_VOLUME_ID = 0x08,
+			ATTR_DIRECTORY = 0x10,
+			ATTR_ARCHIVE = 0x20,
+		};
 
-struct __ATTRIBUTE_PACKED__ FAT12_DirectoryEntry
-{
-	char			Name[11];
-	unsigned char	Attribute;
-	unsigned char	Reserved0;
-	unsigned char	CreateTimeTenth;
-	unsigned short	Reserved1;
-	unsigned short	LastAccessDate;
-	unsigned short	Reserved2;
-	unsigned short	Reserved3;
-	unsigned short	WriteTime;
-	unsigned short	WriteDate;
-	unsigned short	FileSystemClusterLogical;
-	unsigned int	FileSize;
-};
+		struct __ATTRIBUTE_PACKED__ FAT12_BootSector
+		{
+			unsigned short	JmpBootLow;
+			unsigned char	JmpBootHigh;
+			char			OSName[8];
+			unsigned short	BytesPerSector;
+			unsigned char	SectorsPerCluster;
+			unsigned short	ReservedSectorCount;
+			unsigned char	NumFATs;
+			unsigned short	RootEntityCount;
+			unsigned short	TotalSectorCount;
+			unsigned char	MediaType;
+			unsigned short	FATSize;
+			unsigned short	SectorsPerTrack;
+			unsigned short	NumHeads;
+			unsigned int	HiddenSectors;
+			unsigned int	TotalSectors32;
+			unsigned char	DriveNumber;
+			unsigned char	Reserved0;
+			unsigned char	Reserved1;
+			unsigned int	VolumeID;
+			unsigned char	Reserved2[11];
+			char			FileSystemType[8];
+			unsigned char	Reserved3[450];
+		};
+
+		struct __ATTRIBUTE_PACKED__ FAT12_DirectoryEntry
+		{
+			char		Name[11];
+			uint8_t		Attribute;
+			uint8_t		Reserved0;
+			uint8_t		CreateTimeTenth;
+			uint16_t	Reserved1;
+			uint16_t	LastAccessDate;
+			uint16_t	Reserved2;
+			uint16_t	Reserved3;
+			uint16_t	WriteTime;
+			uint16_t	WriteDate;
+			uint16_t	FileSystemClusterLogical;
+			uint32_t	FileSize;
+		};
+	}
+}
 
 class FAT12Directory
-	:	public IFile
+	:	public IFileSystemEntry
 {
 	unsigned short _firstCluster;
 
 public:
 	FAT12Directory( unsigned short firstCluster )
+		:	_firstCluster( firstCluster )
+	{
+	}
+};
+
+class FAT12File
+	:	public IFileSystemEntry
+{
+	unsigned short _firstCluster;
+
+public:
+	FAT12File( unsigned short firstCluster )
 		:	_firstCluster( firstCluster )
 	{
 	}
@@ -99,7 +128,7 @@ public:
 		_index = 0;
 	}
 
-	bool next( IFile** file )
+	bool next( IFileSystemEntry** file )
 	{
 		(void)file;
 
@@ -108,8 +137,8 @@ public:
 			unsigned int sector_index = _index / 16;
 			unsigned int entry_index = _index % 16;
 
-			FAT12_DirectoryEntry* entries = (FAT12_DirectoryEntry*)lock_sector( sector_index );
-			FAT12_DirectoryEntry& entry = entries[entry_index];
+			lowlevel::FAT12_DirectoryEntry* entries = (lowlevel::FAT12_DirectoryEntry*)lock_sector( sector_index );
+			lowlevel::FAT12_DirectoryEntry& entry = entries[entry_index];
 
 			switch( entry.Name[0] )
 			{
@@ -124,14 +153,22 @@ public:
 				continue;
 			}
 
-			char buf[13] = {};
-			extract_file_name( entry.Name, buf );
+			char entry_name[13] = {};
+			extract_file_name( entry.Name, entry_name );
 
-			debug_bochs_printf( "entry.Name[0] = %2x\n", entry.Name[0] );
-			debug_bochs_printf( "entry.Name = %s\n", buf );
-			debug_bochs_printf( "entry.Attribute = %2x\n", entry.Attribute );
-			debug_bochs_printf( "entry.FileSize = %d\n", entry.FileSize );
-			debug_bochs_printf( "entry.FileSystemClusterLogical = %d\n", entry.FileSystemClusterLogical );
+			if( entry.Attribute & lowlevel::ATTR_DIRECTORY )
+			{
+				debug_bochs_printf( "DIRECTORY: %s (%d bytes, from cluster %d)\n", entry_name, entry.FileSize, entry.FileSystemClusterLogical );
+			}
+			else
+			{
+				debug_bochs_printf( "FILE: %s (%d bytes, from cluster %d)\n", entry_name, entry.FileSize, entry.FileSystemClusterLogical );
+			}
+			//debug_bochs_printf( "entry.Name[0] = %2x\n", entry.Name[0] );
+			//debug_bochs_printf( "entry.Name = %s\n", buf );
+			//debug_bochs_printf( "entry.Attribute = %2x\n", entry.Attribute );
+			//debug_bochs_printf( "entry.FileSize = %d\n", entry.FileSize );
+			//debug_bochs_printf( "entry.FileSystemClusterLogical = %d\n", entry.FileSystemClusterLogical );
 
 			unlock_sector( sector_index );
 			_index += 1;
@@ -155,11 +192,13 @@ class FAT12RootDirectoryEnum
 	:	public FAT12DirectoryEnumBase
 {
 	drv::itf::IDiskCacheBuffer* _pRootDirectoryBuffer;
+	FAT12FileSystem*			_pFileSystem;
 
 public:
-	FAT12RootDirectoryEnum( drv::itf::IDiskCacheBuffer* pRootDirectoryBuffer )
+	FAT12RootDirectoryEnum( drv::itf::IDiskCacheBuffer* pRootDirectoryBuffer, FAT12FileSystem* pFileSystem )
 		:	FAT12DirectoryEnumBase( pRootDirectoryBuffer->block_count() ),
-			_pRootDirectoryBuffer( pRootDirectoryBuffer )
+			_pRootDirectoryBuffer( pRootDirectoryBuffer ),
+			_pFileSystem( pFileSystem )
 	{
 	}
 private:
@@ -174,7 +213,7 @@ private:
 	}
 };
 
-FAT12FileSystem::FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer, FAT12_BootSector* pBootSector )
+FAT12FileSystem::FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer, lowlevel::FAT12_BootSector* pBootSector )
 	:	_pDisk( pDisk ),
 		_pBootSectorBuffer( pBootSectorBuffer ),
 		_pBootSector( pBootSector )
@@ -198,7 +237,7 @@ FAT12FileSystem::FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCa
 
 	unsigned int firstFATsector = _pBootSector->ReservedSectorCount;
 	unsigned int firstRootDirectorySector = firstFATsector + _pBootSector->NumFATs * _pBootSector->FATSize;
-	unsigned int numRootDirectorySectors = (_pBootSector->RootEntityCount * sizeof(FAT12_DirectoryEntry)) / _pBootSector->BytesPerSector;
+	unsigned int numRootDirectorySectors = (_pBootSector->RootEntityCount * sizeof(lowlevel::FAT12_DirectoryEntry)) / _pBootSector->BytesPerSector;
 	unsigned int firstDataSector = firstRootDirectorySector + numRootDirectorySectors;
 
 	debug_bochs_printf( "First FAT sector = %d\n", firstFATsector );
@@ -216,7 +255,7 @@ FAT12FileSystem::~FAT12FileSystem()
 
 FAT12FileSystem* FAT12FileSystem::tryCreate( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer )
 {
-	FAT12_BootSector* bootSector = (FAT12_BootSector*)pBootSectorBuffer->lock();
+	lowlevel::FAT12_BootSector* bootSector = (lowlevel::FAT12_BootSector*)pBootSectorBuffer->lock();
 	if( bootSector )
 	{
 		if( strncmp( bootSector->FileSystemType, "FAT12", 5 ) == 0 )
@@ -232,5 +271,5 @@ FAT12FileSystem* FAT12FileSystem::tryCreate( drv::itf::IDiskCache* pDisk, drv::i
 
 IDirectoryEnum* FAT12FileSystem::root_directory()
 {
-	return new FAT12RootDirectoryEnum( _pRootBuffer );
+	return new FAT12RootDirectoryEnum( _pRootBuffer, this );
 }

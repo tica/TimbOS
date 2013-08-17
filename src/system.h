@@ -3,6 +3,7 @@
 #define _SYSTEM_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 struct cpu_state
 {
