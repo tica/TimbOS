@@ -102,6 +102,7 @@ void sparta()
 	console.printf( "\x0ca" );
 	console.printn( '\x0cd', 30 );
 	console.printf( "\x0bc" );
+	console.printf( "\n" );
 }
 
 extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
