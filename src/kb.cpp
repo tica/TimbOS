@@ -17,7 +17,7 @@ extern CONSOLE console;
 *  comments in to give you an idea of what key is what, even
 *  though I set it's array index to 0. You can change that to
 *  whatever you want using a macro, if you wish! */
-unsigned char kbdus[128] =
+char kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
   '9', '0', '-', '=', '\b',	/* Backspace */
@@ -57,7 +57,7 @@ unsigned char kbdus[128] =
     0,	/* All other keys are undefined */
 };
 
-unsigned char kbdus_upper[128] =
+char kbdus_upper[128] =
 {
 	0,  27, '!', '@', '#', '$', '%', '^', '&', '*',	/* 9 */
 	'(', ')', '_', '+', '\b',	/* Backspace */
@@ -98,9 +98,9 @@ unsigned char kbdus_upper[128] =
 };
 
 //German Layout
-unsigned char kbdger[128] =
+char kbdger[128] =
 {
-	0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
+	0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */	
 	'9', '0', 'ß', '´', '\b',	/* Backspace */
 	'\t',			/* Tab */
 	'q', 'w', 'e', 'r',	/* 19 */
@@ -135,10 +135,10 @@ unsigned char kbdger[128] =
 	0,   0,   0,
 	0,	/* F11 Key */
 	0,	/* F12 Key */
-	0,	/* All other keys are undefined */
+	0	/* All other keys are undefined */
 };
 
-unsigned char kbdger_upper[128] =
+char kbdger_upper[128] =
 {
 	0,  27, '!', '"', '§', '$', '%', '&', '/', '(',	/* 9 */
 	')', '=', '?', '`', '\b',	/* Backspace */

@@ -7,7 +7,10 @@
 
 namespace fs
 {
-	struct FAT12_BootSector;
+	namespace lowlevel
+	{
+		struct FAT12_BootSector;
+	}
 
 	class FAT12FileSystem
 		:	public IFileSystem
@@ -19,10 +22,10 @@ namespace fs
 		drv::itf::IDiskCacheBuffer*	_pFATBuffer;
 		drv::itf::IDiskCacheBuffer*	_pRootBuffer;
 
-		FAT12_BootSector*			_pBootSector;
+		lowlevel::FAT12_BootSector*	_pBootSector;
 
 	private:
-		FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer, FAT12_BootSector* pBootSector );
+		FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer, lowlevel::FAT12_BootSector* pBootSector );
 
 	public:
 		virtual ~FAT12FileSystem();
