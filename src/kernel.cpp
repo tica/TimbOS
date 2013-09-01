@@ -1,7 +1,7 @@
 
 #include "system.h"
 #include "video.h"
-#include <memory.h>
+#include <string.h>
 #include "console.h"
 #include "debug.h"
 #include "multiboot.h"
@@ -20,6 +20,8 @@
 #include "devmanager.h"
 #include "diskcache.h"
 #include "FAT12FileSystem.h"
+#include "syscall.h"
+#include "interlocked.h"
 
 
 #include "test/stl_test.h"
@@ -54,6 +56,27 @@ void taskX( void )
 			console.printf( "%c", ch );
 		}
 	}
+}
+
+int count_a = 0, count_b = 0;
+int global_counter;
+int counting_cs = 0;
+
+template<char ch, int& local>
+void counting_test( void )
+{
+	for( local = 0; local < 1000; ++local )
+	{
+		global_counter += 1;
+
+		interlocked::enter( &counting_cs );
+
+		console.printf( "Task %c: a = %d b = %d global = %d\n", ch, count_a, count_b, global_counter );
+
+		interlocked::leave( &counting_cs );
+	}
+
+	while( 1 );
 }
 
 void floppy_init();
@@ -157,6 +180,8 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 #endif
 
 	scheduler::init();
+	syscall::init();
+
 	floppy_init();	
 
 	debug_bochs_printf( "\n\nAbout to enable interrupts... crashing???\n" );
@@ -165,9 +190,10 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 
 	drv::DeviceManager devmgr;
 	drv::manager::probe_all( devmgr );
-	
-	console.printf( "idle\n" );
 
+	console.printf( "idle\n" );	
+
+	/*
 	auto floppy0 = devmgr.floppy0_cache();
 	auto bootSect = floppy0->cache( 0, 1 );
 	bootSect->lock();
@@ -187,12 +213,18 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	debug_bochs_printf( "root->next returned false\n" );
 
 	bootSect->unlock();
+	*/
 
-	test_stl();
+	//test_stl();
 
 	//scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'A'> );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'B'> );
+	
+	/*
+	scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'A', count_a> );
+	scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'B', count_b> );
+	*/
 
 	// stay!
 	while( 1 )

@@ -4,7 +4,7 @@
 #include "video.h"
 #include "format.h"
 
-#include <memory.h>
+#include <string.h>
 
 struct CONSOLE console;
 

@@ -1,5 +1,5 @@
 
-#include "memory.h"
+#include "string.h"
 #include "../../debug.h"
 
 void* memcpy( void* destination, const void* source, size_t count )
@@ -46,10 +46,26 @@ char* strcat( char* destination, char* source )
 	return destination;
 }
 
+int strcmp( const char* s1, const char* s2 )
+{
+	while( true )
+	{
+		if( *s1 != *s2 )
+			return *s1 - *s2;
+
+		if( !*s1 && !*s2 )
+			return 0;
+		else if( !*s1 )
+			return -1;
+		else if( !*s2 )
+			return 1;
+	}
+
+	return 0;
+}
+
 int strncmp( const char* s1, const char* s2, size_t count )
 {
-	TRACE3( s1, s2, count );
-
 	while( count-- > 0 )
 	{
 		if( *s1 != *s2 )
@@ -63,4 +79,14 @@ int strncmp( const char* s1, const char* s2, size_t count )
 	}
 
 	return 0;
+}
+
+size_t strlen( const char* s )
+{
+	size_t result = 0;
+
+	while( *s++ )
+		result += 1;
+
+	return result;
 }

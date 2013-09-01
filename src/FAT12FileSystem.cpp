@@ -3,7 +3,7 @@
 #include "FAT12FileSystem.h"
 #include "debug.h"
 
-#include <memory.h>
+#include <string.h>
 #include <stdint.h>
 
 using namespace fs;

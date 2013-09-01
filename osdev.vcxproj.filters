@@ -58,6 +58,18 @@
     <Filter Include="lib\ministl\impl">
       <UniqueIdentifier>{0d6424ee-336c-48e6-8bb2-a2092d9e9426}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\mystl">
+      <UniqueIdentifier>{ac087e1c-eb40-41cf-aa40-fec1843aeeda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\ipc">
+      <UniqueIdentifier>{0f5ea075-e075-45ce-9488-1e8c8ae3e516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\syscall">
+      <UniqueIdentifier>{f00465fe-808e-4c91-bbf2-7ab679b061e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\interface">
+      <UniqueIdentifier>{6f8d7406-96ba-4aea-bae3-15158f9dbe39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -141,9 +153,6 @@
     <ClInclude Include="src\lib\minilibc\stddef.h">
       <Filter>lib\minilibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\memory.h">
-      <Filter>lib\minilibc</Filter>
-    </ClInclude>
     <ClInclude Include="src\diskcacheimpl.h">
       <Filter>core\drv\diskcache</Filter>
     </ClInclude>
@@ -161,6 +170,18 @@
     </ClInclude>
     <ClInclude Include="src\test\stl_test.h">
       <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\minilibc\string.h">
+      <Filter>lib\minilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interlocked.h">
+      <Filter>core\ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\syscall.h">
+      <Filter>core\syscall</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timbos.h">
+      <Filter>core\interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +229,15 @@
     </None>
     <None Include="build\mtools.cfg">
       <Filter>build</Filter>
+    </None>
+    <None Include="src\lib\mystl\string">
+      <Filter>lib\mystl</Filter>
+    </None>
+    <None Include="src\interlocked_.s">
+      <Filter>core\ipc</Filter>
+    </None>
+    <None Include="src\syscall_.s">
+      <Filter>core\syscall</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +301,6 @@
     <ClCompile Include="src\drvmanager.cpp">
       <Filter>core\drv</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\minilibc\memory.cpp">
-      <Filter>lib\minilibc</Filter>
-    </ClCompile>
     <ClCompile Include="src\devmanager.cpp">
       <Filter>core\drv</Filter>
     </ClCompile>
@@ -300,6 +327,15 @@
     </ClCompile>
     <ClCompile Include="src\lib\ministl\impl\tree.cpp">
       <Filter>lib\ministl\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\minilibc\string.cpp">
+      <Filter>lib\minilibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\syscall.cpp">
+      <Filter>core\syscall</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timbos.cpp">
+      <Filter>core\interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

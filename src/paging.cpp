@@ -10,7 +10,7 @@
 #include "console.h"
 #include "mm.h"
 
-#include <memory.h>
+#include <string.h>
 
 void invlpg( uintptr_t virtual_addr )
 {

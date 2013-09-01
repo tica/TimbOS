@@ -1,0 +1,119 @@
+
+#pragma once
+
+#include <utility>
+#include <string.h>
+
+namespace std
+{	
+	template<typename T>
+	class basic_string
+	{
+	public:
+		typedef T value_type;
+		typedef size_t size_type;
+		typedef T* pointer;
+		typedef const pointer const_pointer;
+
+	public:
+		basic_string()
+			:	_begin( 0 ), _len( 0 )
+		{
+		}
+
+		basic_string( const value_type* s )
+#ifdef _MSC_VER
+			:	_begin( 0 ), _len( 0 )
+#else
+			:	basic_string()
+#endif
+		{
+			assign( s, strlen(s) );
+		}
+
+		basic_string( const basic_string& s )
+#ifdef _MSC_VER
+			:	_begin( 0 ), _len( 0 )
+#else
+			:	basic_string()
+#endif
+		{
+			assign( s.c_str(), s.size() );
+		}
+
+		basic_string( basic_string&& s )
+#ifdef _MSC_VER
+			:	_begin( 0 ), _len( 0 )
+#else
+			:	basic_string()
+#endif
+		{
+			_begin = s._begin;
+			_len = s._len;
+			s._begin = 0;
+			s._len = 0;
+		}
+
+		~basic_string()
+		{
+			clear();
+		}
+
+	public:
+		size_t	size() const
+		{
+			return _len;
+		}
+
+		const value_type*	c_str() const
+		{
+			if( _begin )
+				return _begin;
+			else
+				return (const value_type*) std::addressof( _begin );
+		}
+
+	public:
+		basic_string& operator=( const basic_string& s )
+		{
+			assign( s.c_str(), s.size() );
+			return *this;
+		}
+
+		basic_string& operator=( const value_type* s )
+		{
+			assign( s, strlen(s) );
+			return *this;
+		}
+
+		bool operator<( const basic_string& s ) const
+		{
+			return strcmp( c_str(), s.c_str() ) < 0;
+		}
+
+	private:
+		void	clear()
+		{
+			if( _len > 0 )
+			{
+				delete _begin;
+			}
+		}
+
+		void	assign( const value_type* s, size_t len )
+		{
+			clear();
+
+			_len = len;
+			_begin = new value_type[len + 1];
+			memcpy( _begin, s, _len * sizeof(value_type) );
+			_begin[len] = 0;
+		}
+
+	private:
+		pointer		_begin;
+		size_type	_len;
+	};
+
+	typedef basic_string<char> string;
+}

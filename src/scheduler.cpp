@@ -9,7 +9,7 @@
 
 #include <list>
 #include <cstddef>
-#include <memory.h>
+#include <string.h>
 
 enum TASK_STATE
 {
@@ -95,4 +95,9 @@ void scheduler::new_task( void* user_stack, void* entry )
 
 	Task* task = new Task( kernel_stack_end, regs );
 	s_task_list.push_back( task );
+}
+
+cpu_state*	scheduler::task_yield( cpu_state* s )
+{
+	return next( s );
 }

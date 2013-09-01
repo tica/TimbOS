@@ -25,7 +25,7 @@ CXX-DEPS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.d,$(CXX-SOURCES))
 
 COMMON-FLAGS = -I./src/lib/minilibc/ -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin
 C-FLAGS = $(COMMON-FLAGS)
-CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -std=c++0x -Wall -fno-rtti -fno-exceptions
+CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -I./src/lib/mystl -std=c++0x -Wall -fno-rtti -fno-exceptions
 
 
 all: $(FLOPPY-1440k-IMG)

@@ -12,7 +12,7 @@
 #include "irq.h"
 #include "debug.h"
 #include "io.h"
-#include <memory.h>
+#include <string.h>
 #include "console.h"
 
 class FloppyDrive;

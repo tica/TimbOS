@@ -93,11 +93,12 @@
     <ClInclude Include="src\gdt.h" />
     <ClInclude Include="src\diskcache.h" />
     <ClInclude Include="src\idt.h" />
+    <ClInclude Include="src\interlocked.h" />
     <ClInclude Include="src\io.h" />
     <ClInclude Include="src\irq.h" />
     <ClInclude Include="src\isr.h" />
     <ClInclude Include="src\kb.h" />
-    <ClInclude Include="src\lib\minilibc\memory.h" />
+    <ClInclude Include="src\lib\minilibc\string.h" />
     <ClInclude Include="src\lib\minilibc\stddef.h" />
     <ClInclude Include="src\lib\minilibc\stdint.h" />
     <ClInclude Include="src\mbtutil.h" />
@@ -109,8 +110,10 @@
     <ClInclude Include="src\physical.h" />
     <ClInclude Include="src\processor.h" />
     <ClInclude Include="src\scheduler.h" />
+    <ClInclude Include="src\syscall.h" />
     <ClInclude Include="src\system.h" />
     <ClInclude Include="src\test\stl_test.h" />
+    <ClInclude Include="src\timbos.h" />
     <ClInclude Include="src\video.h" />
     <ClInclude Include="src\kheap.h" />
   </ItemGroup>
@@ -121,14 +124,17 @@
     <None Include="runmake.cmd" />
     <None Include="runmake.sh" />
     <None Include="src\idt_.s" />
+    <None Include="src\interlocked_.s" />
     <None Include="src\io_.s" />
     <None Include="src\irq_.s" />
     <None Include="src\isr_.s" />
+    <None Include="src\lib\mystl\string" />
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
     <None Include="src\loader.s" />
     <None Include="src\loader.low" />
     <None Include="src\processor.s" />
+    <None Include="src\syscall_.s" />
     <None Include="start.bat" />
   </ItemGroup>
   <ItemGroup>
@@ -148,7 +154,7 @@
     <ClCompile Include="src\isr.cpp" />
     <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
-    <ClCompile Include="src\lib\minilibc\memory.cpp" />
+    <ClCompile Include="src\lib\minilibc\string.cpp" />
     <ClCompile Include="src\lib\minilibc\stdlib.cpp" />
     <ClCompile Include="src\lib\ministl\impl\functexcept.cpp" />
     <ClCompile Include="src\lib\ministl\impl\hashtable-aux.cpp" />
@@ -159,7 +165,9 @@
     <ClCompile Include="src\paging.cpp" />
     <ClCompile Include="src\physical.cpp" />
     <ClCompile Include="src\scheduler.cpp" />
+    <ClCompile Include="src\syscall.cpp" />
     <ClCompile Include="src\test\stl_test.cpp" />
+    <ClCompile Include="src\timbos.cpp" />
     <ClCompile Include="src\video.cpp" />
     <ClCompile Include="src\kheap.cpp" />
   </ItemGroup>

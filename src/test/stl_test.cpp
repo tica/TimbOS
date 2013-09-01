@@ -1,15 +1,16 @@
 
 #include "../debug.h"
 
+#include <utility>
 #include <list>
 #include <functional>
 #include <vector>
 #include <tuple>
 #include <iterator>
 #include <algorithm>
-#include <utility>
 #include <map>
 #include <set>
+#include <string>
 
 namespace
 {
@@ -97,15 +98,39 @@ namespace
 
 		debug_bochs_printf( "}\n" );
 	}
+
+	void test_string( void )
+	{
+		debug_bochs_printf( "\n<<BEGIN test_string\n" );
+
+		std::map<std::string, int> m;
+
+		m["ddd"] = 4;
+		m["Aaa"] = 1;
+		m["bbbb"] = 2;
+		m["cc"] = 3;		
+
+		for( auto& i : m )
+		{
+			debug_bochs_printf( "%s -> %d\n", i.first.c_str(), i.second );
+		}
+
+		debug_bochs_printf( "\n>>END test_string\n\n" );
+	}
 }
 
 void test_stl( void )
 {
+	/*
 	repeat( test_iterator, 10 );
 	repeat( test_tuple, 10 );
 	repeat( test_pair, 10 );	
 	repeat( test_set, 1 );
-	
-	//repeat( test_list, 10 );
+	repeat( test_list, 10 );
+	repeat( test_map, 1 );
+	*/
+
+	test_string();
+
 	//repeat( test_vector, 10 );	
 }
