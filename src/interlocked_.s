@@ -49,3 +49,26 @@ interlocked_compare_exchange_64:
 	pop ebp
 
 	ret
+
+[global interlocked_increment]
+	;	uint32_t	interlocked_increment( uint32_t* p );
+	;	[esp+4] = p
+interlocked_increment:
+	mov ecx, [esp+4]		; ecx = p	
+	xor eax, eax			; eax = 0
+	inc eax					; eax = 1
+	lock xadd [ecx], eax	; *p += eax | eax = *p
+	inc eax					; eax += 1
+	ret
+
+
+[global interlocked_decrement]
+	;	uint32_t	interlocked_decrement( uint32_t* p );
+	;	[esp+4] = p
+interlocked_decrement:
+	mov ecx, [esp+4]		; ecx = p	
+	xor eax, eax			; eax = 0
+	dec eax					; eax = -1
+	lock xadd [ecx], eax	; *p += eax | eax = *p
+	dec eax					; eax -= 1
+	ret

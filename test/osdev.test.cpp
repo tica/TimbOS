@@ -43,8 +43,11 @@ int main(int argc, char* argv[])
 	unsigned int z0 = ::InterlockedExchange( &z, 1 );
 	*/
 
-	unsigned int x = 2;
-	unsigned int y = ::InterlockedCompareExchange( &x, 3, 2 );
+	//unsigned int x = 2;
+	//unsigned int y = ::InterlockedCompareExchange( &x, 3, 2 );
+
+	unsigned int x = 3;
+	unsigned int y = ::InterlockedIncrement( &x );
 
 	return 0;
 }

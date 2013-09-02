@@ -7,9 +7,12 @@ extern "C"
 {
 #endif
 
-	uint32_t interlocked_exchange( uint32_t* p, uint32_t x );
-	uint32_t interlocked_compare_exchange( uint32_t* p, uint32_t comp, uint32_t exch );
-	uint64_t interlocked_compare_exchange_64( uint64_t* p, uint64_t comp, uint64_t exch );
+	uint32_t	interlocked_exchange( uint32_t* p, uint32_t x );
+	uint32_t	interlocked_compare_exchange( uint32_t* p, uint32_t comp, uint32_t exch );
+	uint64_t	interlocked_compare_exchange_64( uint64_t* p, uint64_t comp, uint64_t exch );
+
+	uint32_t	interlocked_increment( uint32_t* p );
+	uint32_t	interlocked_decrement( uint32_t* p );
 
 #ifdef __cplusplus
 }
@@ -30,6 +33,33 @@ namespace interlocked
 	inline bool compare_exchange( uint64_t* p, uint64_t comp, uint64_t exch )
 	{
 		return interlocked_compare_exchange_64( p, comp, exch ) == comp;
+	}
+
+	template<typename T>
+	inline bool compare_exchange( T* p, T comp, T exch )
+	{
+		static_assert(
+			sizeof(T) == 4 ||
+			sizeof(T) == 8,
+			"Invalid sizeof(T) for compare_exchange");
+
+		switch( sizeof(T) )
+		{
+		case 4:
+			return compare_exchange( reinterpret_cast<uint32_t*>(p), *reinterpret_cast<uint32_t*>(&comp), *reinterpret_cast<uint32_t*>(&exch) );
+		case 8:
+			return compare_exchange( reinterpret_cast<uint64_t*>(p), *reinterpret_cast<uint64_t*>(&comp), *reinterpret_cast<uint64_t*>(&exch) );
+		}
+	}
+
+	inline uint32_t increment( uint32_t* p )
+	{
+		return interlocked_increment( p );
+	}
+
+	inline uint32_t decrement( uint32_t* p )
+	{
+		return interlocked_decrement( p );
 	}
 
 	inline void enter( uint32_t* cs )

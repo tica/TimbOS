@@ -191,11 +191,26 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	drv::DeviceManager devmgr;
 	drv::manager::probe_all( devmgr );
 
+	/*
 	uint64_t a = 0x0000001100000001;
 	console.printf( "&a = %p\n", &a );
 	console.printf( "a = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF) );
 	uint64_t b = interlocked::compare_exchange( &a, 0x0000001100000001, 0x0000002200000002 );	
 	console.printf( "a = %x:%x b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
+	*/
+
+	uint32_t a = 1;
+	uint32_t b = interlocked::increment( &a );
+	console.printf( "a = %d, b = %d\n", a, b );
+
+	b = interlocked::decrement( &a );
+	console.printf( "a = %d, b = %d\n", a, b );
+
+	b = interlocked::decrement( &a );
+	console.printf( "a = %d, b = %d\n", a, b );
+
+	b = interlocked::decrement( &a );
+	console.printf( "a = %x, b = %x\n", a, b );
 
 	console.printf( "idle\n" );	
 
