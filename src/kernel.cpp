@@ -199,18 +199,17 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	console.printf( "a = %x:%x b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
 	*/
 
-	uint32_t a = 1;
-	uint32_t b = interlocked::increment( &a );
-	console.printf( "a = %d, b = %d\n", a, b );
+	uint64_t a = 2, b = 0;
+	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
+
+	b = interlocked::decrement( &a );		
+	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
 
 	b = interlocked::decrement( &a );
-	console.printf( "a = %d, b = %d\n", a, b );
+	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
 
 	b = interlocked::decrement( &a );
-	console.printf( "a = %d, b = %d\n", a, b );
-
-	b = interlocked::decrement( &a );
-	console.printf( "a = %x, b = %x\n", a, b );
+	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
 
 	console.printf( "idle\n" );	
 

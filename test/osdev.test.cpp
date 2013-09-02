@@ -10,6 +10,8 @@
 #include <string>
 #endif
 
+#include <cstdint>
+
 #include <stdio.h>
 #include <map>
 
@@ -46,8 +48,8 @@ int main(int argc, char* argv[])
 	//unsigned int x = 2;
 	//unsigned int y = ::InterlockedCompareExchange( &x, 3, 2 );
 
-	unsigned int x = 3;
-	unsigned int y = ::InterlockedIncrement( &x );
+	int64_t x = 3;
+	int64_t y = ::InterlockedIncrement64( &x );
 
 	return 0;
 }

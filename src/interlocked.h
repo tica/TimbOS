@@ -62,6 +62,32 @@ namespace interlocked
 		return interlocked_decrement( p );
 	}
 
+	inline uint64_t increment( uint64_t* p )
+	{
+		uint64_t old;
+
+		do
+		{
+			old = *p;
+		}
+		while( !compare_exchange(p, old, old + 1) );
+
+		return old + 1;
+	}
+
+	inline uint64_t decrement( uint64_t* p )
+	{
+		uint64_t old;
+
+		do
+		{
+			old = *p;
+		}
+		while( !compare_exchange(p, old, old - 1) );
+
+		return old - 1;
+	}
+
 	inline void enter( uint32_t* cs )
 	{
 		while( exchange( cs, 1 ) > 0 )
