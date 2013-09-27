@@ -1,4 +1,42 @@
-Type into grub:
+Build on Windows
 
-kernel 200+2000
-boot
+Software to install:
+- Cygwin
+| - gcc
+| - make
+| - flex
+| - bison
+
+
+Download and compile:
+GMP  http://gmplib.org/
+MPFR http://mpfr.org/
+MPC  http://multiprecision.org/
+
+
+Preparation:
+export PREFIX=$H/opt/cross
+export TARGET=i586-elf
+export PATH="$PREFIX/bin:$PATH"
+
+Configuration for Binutils:
+../binutils-x.y.z/configure --target=$TARGET --prefix="$PREFIX" --disable-nls
+
+Building GCC:
+# If you wish to build these packages as part of gcc:
+mv gmp-x.y.z gcc-x.y.z/gmp
+mv mpfr-x.y.z gcc-x.y.z/mpfr
+mv mpc-x.y.z gcc-x.y.z/mpc
+
+mkdir build-gcc
+cd build-gcc
+../gcc-x.y.z/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
+make all-gcc
+make all-target-libgcc
+make install-gcc
+make install-target-libgcc
+
+Also, mtools need to be downloaded, compiled and installed.
+
+Troubleshooting:
+- set line endings of create-image.sh and mtools.cfg to UNIX
