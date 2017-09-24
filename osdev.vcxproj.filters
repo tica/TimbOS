@@ -70,6 +70,9 @@
     <Filter Include="core\interface">
       <UniqueIdentifier>{6f8d7406-96ba-4aea-bae3-15158f9dbe39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\obj">
+      <UniqueIdentifier>{fd163790-0995-4ec7-9c86-760e1cb2d328}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -183,6 +186,12 @@
     <ClInclude Include="src\timbos.h">
       <Filter>core\interface</Filter>
     </ClInclude>
+    <ClInclude Include="src\objectmanager.h">
+      <Filter>core\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objectdirectory.h">
+      <Filter>core\obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\linker.ld">
@@ -238,6 +247,12 @@
     </None>
     <None Include="src\syscall_.s">
       <Filter>core\syscall</Filter>
+    </None>
+    <None Include="src\lib\mystl\memory">
+      <Filter>lib\mystl</Filter>
+    </None>
+    <None Include="mybochsrc.bxrc">
+      <Filter>build</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -336,6 +351,9 @@
     </ClCompile>
     <ClCompile Include="src\timbos.cpp">
       <Filter>core\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objectmanager.cpp">
+      <Filter>core\obj</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <memory>
 
 namespace
 {
@@ -117,6 +118,22 @@ namespace
 
 		debug_bochs_printf( "\n>>END test_string\n\n" );
 	}
+
+	void test_shared_ptr( void )
+	{
+		debug_bochs_printf( "\n<<BEGIN test_shared_ptr\n" );
+
+		std::shared_ptr<int> p( new int(1) );
+		std::shared_ptr<int> q( new int(2) );
+
+		debug_bochs_printf( "*p = %d, *q = %d\n", *p, *q );
+		q = p;
+		debug_bochs_printf( "*p = %d, *q = %d\n", *p, *q );
+
+		p.reset();
+
+		debug_bochs_printf( "\n>>END test_shared_ptr\n\n" );
+	}
 }
 
 void test_stl( void )
@@ -130,7 +147,9 @@ void test_stl( void )
 	repeat( test_map, 1 );
 	*/
 
-	test_string();
+	//test_string();
+
+	test_shared_ptr();
 
 	//repeat( test_vector, 10 );	
 }

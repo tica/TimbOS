@@ -1,0 +1,114 @@
+
+#pragma once
+
+#include <utility>
+#include <stdint.h>
+
+#ifdef _MSC_VER
+#define int_dec ::InterlockedDecrement
+#define int_inc ::InterlockedIncrement
+#else
+#include "../../interlocked.h"
+#define int_dec interlocked::decrement
+#define int_inc interlocked::increment
+#endif
+
+namespace std
+{
+	template<typename T>
+	class shared_ptr
+	{
+	public:
+		shared_ptr( void )
+			:	_target( nullptr ),
+				_refcount( nullptr )
+		{
+		}
+
+		explicit shared_ptr( T* p )
+			:	_target( p ),
+				_refcount( nullptr )
+		{
+			if( _target )
+			{
+				_refcount = new uint32_t( 1 );
+			}
+		}
+
+		shared_ptr( const shared_ptr& p )
+			:	_target( p._target ),
+				_refcount( p._refcount )
+		{
+			if( _refcount )
+			{
+				int_inc( _refcount );
+			}
+		}
+
+		shared_ptr( shared_ptr&& p )
+			:	_target( nullptr ),
+				_refcount( nullptr )
+		{
+			std::swap( _target, p._target );
+			std::swap( _refcount, p._refcount );
+		}
+
+		~shared_ptr()
+		{
+			release();
+		}
+
+	public:
+		T* operator->( void )
+		{
+			return _target;
+		}
+
+		T& operator*( void )
+		{
+			return *_target;
+		}
+
+	public:
+		shared_ptr operator=( const shared_ptr& p )
+		{
+			release();
+
+			_target = p._target;
+			_refcount = p._refcount;
+
+			if( _refcount )
+			{
+				int_inc( _refcount );
+			}
+
+			return *this;
+		}
+
+	public:
+		void reset( void )
+		{
+			release();
+		}
+
+	private:
+		void release()
+		{
+			if( !_refcount )
+				return;
+
+			if( int_dec( _refcount ) == 0 )
+			{
+				delete _refcount;
+				delete _target;				
+			}
+
+			_refcount = nullptr;
+			_target = nullptr;
+		}
+
+	private:
+		T*			_target;
+		uint32_t*	_refcount;		
+	};
+}

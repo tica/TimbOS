@@ -164,11 +164,11 @@ public:
 			{
 				debug_bochs_printf( "FILE: %s (%d bytes, from cluster %d)\n", entry_name, entry.FileSize, entry.FileSystemClusterLogical );
 			}
-			//debug_bochs_printf( "entry.Name[0] = %2x\n", entry.Name[0] );
-			//debug_bochs_printf( "entry.Name = %s\n", buf );
-			//debug_bochs_printf( "entry.Attribute = %2x\n", entry.Attribute );
-			//debug_bochs_printf( "entry.FileSize = %d\n", entry.FileSize );
-			//debug_bochs_printf( "entry.FileSystemClusterLogical = %d\n", entry.FileSystemClusterLogical );
+			debug_bochs_printf( "entry.Name[0] = %2x\n", entry.Name[0] );
+			debug_bochs_printf( "entry_name = %s\n", entry_name);
+			debug_bochs_printf( "entry.Attribute = %2x\n", entry.Attribute );
+			debug_bochs_printf( "entry.FileSize = %d\n", entry.FileSize );
+			debug_bochs_printf( "entry.FileSystemClusterLogical = %d\n", entry.FileSystemClusterLogical );
 
 			unlock_sector( sector_index );
 			_index += 1;
@@ -184,8 +184,8 @@ public:
 	}
 
 protected:
-	virtual void* lock_sector( unsigned int n ) = 0;
-	virtual void unlock_sector( unsigned int n ) = 0;
+	virtual void* lock_sector(unsigned int n) = 0;
+	virtual void unlock_sector(unsigned int n) = 0;
 };
 
 class FAT12RootDirectoryEnum
@@ -202,12 +202,12 @@ public:
 	{
 	}
 private:
-	virtual void* lock_sector( unsigned int n )
+	virtual void* lock_sector( unsigned int n ) override
 	{
 		return (void*)(uintptr_t(_pRootDirectoryBuffer->lock()) + n * 512);
 	}
 
-	virtual void unlock_sector( unsigned int )
+	virtual void unlock_sector( unsigned int ) override
 	{
 		_pRootDirectoryBuffer->unlock();
 	}

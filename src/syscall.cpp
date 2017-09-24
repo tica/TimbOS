@@ -5,7 +5,7 @@
 #include "irq.h"
 #include "scheduler.h"
 
-extern "C" void int21_0( int no );
+extern "C" void int23_0( int no );
 
 cpu_state* syscall_handler( cpu_state* s )
 {
@@ -21,10 +21,10 @@ cpu_state* syscall_handler( cpu_state* s )
 
 void syscall::init( void )
 {
-	irq::install_handler( 1, syscall_handler );
+	irq::install_handler( 3, syscall_handler );
 }
 
 void syscall::execute( ID no )
 {
-	int21_0( (int)no );
+	int23_0( (int)no );
 }

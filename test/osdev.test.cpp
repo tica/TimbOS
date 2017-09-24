@@ -6,9 +6,14 @@
 #if 0
 #include "../src/lib/mystl/string"
 #define _XSTRING_
+
+#include "../src/lib/mystl/memory"
 #else
 #include <string>
+#include <memory>
 #endif
+
+#include "../src/diskcache.h"
 
 #include <cstdint>
 
@@ -17,39 +22,7 @@
 
 int main(int argc, char* argv[])
 {
-	std::string s( "Aaaa" );
-	printf( "s = %s\n", s.c_str() );
-	s = "Bbb";
-	printf( "s = %s\n", s.c_str() );
 
-	std::string t = std::move(s);
-	printf( "s = %s\n", s.c_str() );
-	printf( "t = %s\n", t.c_str() );
-
-	std::map<std::string, int> m;
-
-	m["Aaa"] = 1;
-	m["bbbb"] = 2;
-	m["cc"] = 3;
-
-	for( auto& i : m )
-	{
-		printf( "%s -> %d\n", i.first.c_str(), i.second );
-	}
-
-	/*
-	unsigned int x = 3;
-	unsigned int y = ::InterlockedIncrement( &x );
-
-	unsigned int z = 0;
-	unsigned int z0 = ::InterlockedExchange( &z, 1 );
-	*/
-
-	//unsigned int x = 2;
-	//unsigned int y = ::InterlockedCompareExchange( &x, 3, 2 );
-
-	int64_t x = 3;
-	int64_t y = ::InterlockedIncrement64( &x );
 
 	return 0;
 }

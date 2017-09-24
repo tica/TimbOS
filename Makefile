@@ -23,9 +23,9 @@ CXX-OBJECTS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.o,$(CXX-SOURCES))
 C-DEPS		:= $(patsubst $(SRC-DIR)/%.c,$(OBJ-DIR)/%.d,$(C-SOURCES))
 CXX-DEPS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.d,$(CXX-SOURCES))
 
-COMMON-FLAGS = -I./src/lib/minilibc/ -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin
+COMMON-FLAGS = -I./src/lib/minilibc/ -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-unused-function
 C-FLAGS = $(COMMON-FLAGS)
-CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -I./src/lib/mystl -std=c++0x -Wall -fno-rtti -fno-exceptions
+CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -I./src/lib/mystl -std=c++17 -Wall -fno-rtti -fno-exceptions
 
 
 all: $(FLOPPY-1440k-IMG)

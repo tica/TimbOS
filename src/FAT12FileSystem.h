@@ -28,12 +28,12 @@ namespace fs
 		FAT12FileSystem( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer, lowlevel::FAT12_BootSector* pBootSector );
 
 	public:
-		virtual ~FAT12FileSystem();
+		virtual ~FAT12FileSystem() override;
 
 		static FAT12FileSystem* tryCreate( drv::itf::IDiskCache* pDisk, drv::itf::IDiskCacheBuffer* pBootSectorBuffer );
 
 	public:
-		virtual IDirectoryEnum* root_directory();
+		virtual IDirectoryEnum* root_directory() override;
 	};
 }
 

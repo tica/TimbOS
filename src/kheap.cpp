@@ -19,6 +19,42 @@ void* operator new( size_t, void* ptr )
 	return ptr;
 }
 
+void*	operator new(size_t size)
+{
+	TRACE1(size);
+	return mm::heap::alloc(size);
+}
+
+void*	operator new[](size_t size)
+{
+	TRACE1(size);
+	return mm::heap::alloc(size);
+}
+
+void operator delete(void* ptr)
+{
+	TRACE1(ptr);
+	return mm::heap::free(ptr);
+}
+
+void operator delete(void* ptr, long unsigned int)
+{
+	TRACE1(ptr);
+	return mm::heap::free(ptr);
+}
+
+void operator delete[](void* ptr)
+{
+	TRACE1(ptr);
+	return mm::heap::free(ptr);
+}
+
+void operator delete[](void* ptr, long unsigned int)
+{
+	TRACE1(ptr);
+	return mm::heap::free(ptr);
+}
+
 template<unsigned int obj_size>
 struct heap_object
 {

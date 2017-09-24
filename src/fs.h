@@ -10,7 +10,7 @@ namespace fs
 	{
 		virtual ~IFileSystemEntry() {}
 
-		virtual bool get_name( char* buf ) = 0;
+		virtual bool get_name( char* buf, size_t buf_len ) = 0;
 		virtual IDirectoryEnum* children() = 0;
 	};
 

@@ -9,3 +9,4 @@ bin
 *.log
 objdump.txt
 Debug
+/.vs

@@ -23,7 +23,6 @@
 #include "syscall.h"
 #include "interlocked.h"
 
-
 #include "test/stl_test.h"
 
 extern "C" void gdt_install( void );
@@ -50,7 +49,7 @@ void taskX( void )
 
 	while( true )
 	{
-		if( ++skip == 100 )
+		if( ++skip == 1000 )
 		{
 			skip = 0;
 			console.printf( "%c", ch );
@@ -194,26 +193,13 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	/*
 	uint64_t a = 0x0000001100000001;
 	console.printf( "&a = %p\n", &a );
-	console.printf( "a = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF) );
+	console.printf( "a = %lx\n", a );
 	uint64_t b = interlocked::compare_exchange( &a, 0x0000001100000001, 0x0000002200000002 );	
-	console.printf( "a = %x:%x b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
+	console.printf( "a = %lx b = %lx\n", a, b );
 	*/
-
-	uint64_t a = 2, b = 0;
-	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
-
-	b = interlocked::decrement( &a );		
-	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
-
-	b = interlocked::decrement( &a );
-	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
-
-	b = interlocked::decrement( &a );
-	console.printf( "a = %x:%x, b = %x:%x\n", (uint32_t)(a >> 32), (uint32_t)(a & 0xFFFFFFFF), (uint32_t)(b >> 32), (uint32_t)(b & 0xFFFFFFFF) );
 
 	console.printf( "idle\n" );	
 
-	/*
 	auto floppy0 = devmgr.floppy0_cache();
 	auto bootSect = floppy0->cache( 0, 1 );
 	bootSect->lock();
@@ -227,13 +213,14 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	while( root->next( &file ) )
 	{
 		debug_bochs_printf( "root->next returned true\n" );
-		debug_bochs_printf( "file = %p\n", file );
-		
+		debug_bochs_printf( "file = %p\n", file );		
+
+		//file->get_name( file_name, sizeof(file_name) );
+		//console.printf("file = %s\n", file_name);
 	}
 	debug_bochs_printf( "root->next returned false\n" );
 
 	bootSect->unlock();
-	*/
 
 	//test_stl();
 
