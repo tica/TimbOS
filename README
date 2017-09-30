@@ -1,33 +1,28 @@
-Build on Windows
+Build on Windows lxss:
 
 Software to install:
-- Cygwin
-| - gcc
-| - make
-| - flex
-| - bison
+- build_essentials
+- mtools
+- nasm
 
 
-Download and compile:
-GMP  http://gmplib.org/
-MPFR http://mpfr.org/
-MPC  http://multiprecision.org/
+Download sources for:
+- Binutils
+- gcc
 
 
 Preparation:
 export PREFIX=$H/opt/cross
-export TARGET=i586-elf
+export TARGET=i686-elf
 export PATH="$PREFIX/bin:$PATH"
 
-Configuration for Binutils:
+Building Binutils:
 ../binutils-x.y.z/configure --target=$TARGET --prefix="$PREFIX" --disable-nls
+make
+sudo make install
 
 Building GCC:
-# If you wish to build these packages as part of gcc:
-mv gmp-x.y.z gcc-x.y.z/gmp
-mv mpfr-x.y.z gcc-x.y.z/mpfr
-mv mpc-x.y.z gcc-x.y.z/mpc
-
+gcc-x.y.z/contrib/download_prerequisites
 mkdir build-gcc
 cd build-gcc
 ../gcc-x.y.z/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
@@ -35,8 +30,6 @@ make all-gcc
 make all-target-libgcc
 make install-gcc
 make install-target-libgcc
-
-Also, mtools need to be downloaded, compiled and installed.
 
 Troubleshooting:
 - set line endings of create-image.sh and mtools.cfg to UNIX

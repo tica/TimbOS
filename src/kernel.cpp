@@ -228,10 +228,8 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'A'> );
 	//scheduler::new_task( mm::alloc_pages(), (void*)taskX<'B'> );
 	
-	/*
-	scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'A', count_a> );
-	scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'B', count_b> );
-	*/
+	//scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'A', count_a> );
+	//scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'B', count_b> );
 
 	// stay!
 	while( 1 )

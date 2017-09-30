@@ -1,17 +1,20 @@
 
 #include "../debug.h"
 
+#include <functional>
 #include <utility>
 #include <list>
-#include <functional>
+#include <set>
 #include <vector>
+#include <map>
 #include <tuple>
 #include <iterator>
-#include <algorithm>
-#include <map>
-#include <set>
 #include <string>
+
+#if 0
+include <algorithm>
 #include <memory>
+#endif
 
 namespace
 {
@@ -33,20 +36,48 @@ namespace
 		lst.clear();
 	}
 
-	void test_vector( void )
+	void test_set(void)
+	{
+		std::set<int> s;
+		for (int i = 0; i < 10; ++i) s.insert(i);
+
+		debug_bochs_printf("set: { ");
+		for (auto i : s)
+		{
+			debug_bochs_printf("%d ", i);
+		}
+
+		debug_bochs_printf("}\n");
+	}
+
+	void test_vector(void)
 	{
 		std::vector<int> v;
 
-		for( int i = 0; i < 1000; ++i )
-			v.push_back( i );
+		for (int i = 0; i < 1000; ++i)
+			v.push_back(i);
 
 		v.clear();
 	}
 
-	void test_tuple( void )
+	void test_map(void)
+	{
+		std::map<int, int> m;
+		for (int i = 0; i < 10; ++i)
+			m[i] = 10 - i;
+
+		for (auto p : m)
+		{
+			debug_bochs_printf("%d -> %d\n", p.first, p.second);
+		}
+	}
+
+	void test_tuple(void)
 	{
 		int x, y;
-		std::tie(x, y) = std::make_tuple( 1, 0 );
+		std::tie(x, y) = std::make_tuple(1, 0);
+
+		debug_bochs_printf("tuple: (%d %d)\n", x, y);
 	}
 
 	void test_iterator( void )
@@ -67,37 +98,11 @@ namespace
 		debug_bochs_printf( "\n" );
 	}
 
-	void test_pair( void )
+	void test_pair(void)
 	{
-		auto p = std::make_pair( 1, 2 );
+		auto p = std::make_pair(1, 2);
 
-		debug_bochs_printf( "pair: %d-%d\n", p.first, p.second );
-	}
-
-	void test_map( void )
-	{
-		std::map<int, int> m;
-		for( int i = 0; i < 10; ++i )
-			m[i] = 10 - i;
-
-		for( auto p : m )
-		{
-			debug_bochs_printf( "%d -> %d\n", p.first, p.second );
-		}
-	}
-
-	void test_set( void )
-	{
-		std::set<int> s;
-		for( int i = 0; i < 10; ++i ) s.insert( i );
-
-		debug_bochs_printf( "set: { " );
-		for( auto i : s )
-		{
-			debug_bochs_printf( "%d ", i );
-		}
-
-		debug_bochs_printf( "}\n" );
+		debug_bochs_printf("pair: %d-%d\n", p.first, p.second);
 	}
 
 	void test_string( void )
@@ -119,6 +124,7 @@ namespace
 		debug_bochs_printf( "\n>>END test_string\n\n" );
 	}
 
+#if 0
 	void test_shared_ptr( void )
 	{
 		debug_bochs_printf( "\n<<BEGIN test_shared_ptr\n" );
@@ -134,22 +140,20 @@ namespace
 
 		debug_bochs_printf( "\n>>END test_shared_ptr\n\n" );
 	}
+#endif
 }
 
 void test_stl( void )
 {
-	/*
-	repeat( test_iterator, 10 );
-	repeat( test_tuple, 10 );
-	repeat( test_pair, 10 );	
-	repeat( test_set, 1 );
-	repeat( test_list, 10 );
-	repeat( test_map, 1 );
-	*/
+	repeat(test_list, 1);
+	repeat(test_set, 1);
+	repeat(test_vector, 1);
+	repeat(test_map, 1);
+	repeat(test_tuple, 10);
+	repeat(test_iterator, 10);
+	repeat(test_pair, 10);
 
-	//test_string();
+	test_string();
 
-	test_shared_ptr();
-
-	//repeat( test_vector, 10 );	
+	//test_shared_ptr();
 }

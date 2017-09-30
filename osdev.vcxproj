@@ -153,9 +153,17 @@
     <ClInclude Include="src\irq.h" />
     <ClInclude Include="src\isr.h" />
     <ClInclude Include="src\kb.h" />
+    <ClInclude Include="src\lib\minilibc\assert.h" />
+    <ClInclude Include="src\lib\minilibc\ctype.h" />
+    <ClInclude Include="src\lib\minilibc\errno.h" />
+    <ClInclude Include="src\lib\minilibc\limits.h" />
+    <ClInclude Include="src\lib\minilibc\stdio.h" />
+    <ClInclude Include="src\lib\minilibc\stdlib.h" />
     <ClInclude Include="src\lib\minilibc\string.h" />
     <ClInclude Include="src\lib\minilibc\stddef.h" />
     <ClInclude Include="src\lib\minilibc\stdint.h" />
+    <ClInclude Include="src\lib\minilibc\wchar.h" />
+    <ClInclude Include="src\lib\minilibc\wctype.h" />
     <ClInclude Include="src\mbtutil.h" />
     <ClInclude Include="src\mm.h" />
     <ClInclude Include="src\mmdef.h" />
@@ -186,12 +194,6 @@
     <None Include="src\io_.s" />
     <None Include="src\irq_.s" />
     <None Include="src\isr_.s" />
-    <None Include="src\lib\mystl\memory">
-      <FileType>CppHeader</FileType>
-    </None>
-    <None Include="src\lib\mystl\string">
-      <FileType>CppHeader</FileType>
-    </None>
     <None Include="src\linker.ld" />
     <None Include="src\linker.low" />
     <None Include="src\loader.s" />
@@ -217,12 +219,11 @@
     <ClCompile Include="src\isr.cpp" />
     <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
+    <ClCompile Include="src\lib\minilibc\errno.cpp" />
+    <ClCompile Include="src\lib\minilibc\stdio.cpp" />
     <ClCompile Include="src\lib\minilibc\string.cpp" />
     <ClCompile Include="src\lib\minilibc\stdlib.cpp" />
-    <ClCompile Include="src\lib\ministl\impl\functexcept.cpp" />
-    <ClCompile Include="src\lib\ministl\impl\hashtable-aux.cpp" />
-    <ClCompile Include="src\lib\ministl\impl\list.cpp" />
-    <ClCompile Include="src\lib\ministl\impl\tree.cpp" />
+    <ClCompile Include="src\lib\minilibc\wchar.cpp" />
     <ClCompile Include="src\mm.cpp" />
     <ClCompile Include="src\objectmanager.cpp" />
     <ClCompile Include="src\pagedir.cpp" />

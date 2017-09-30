@@ -2,6 +2,8 @@
 #ifndef _DEVMANAGER_H_INC_
 #define _DEVMANAGER_H_INC_
 
+#include_next <stdio.h>
+#include <cstddef>
 #include <list>
 
 #include "driverbase.h"

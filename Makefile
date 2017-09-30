@@ -23,9 +23,23 @@ CXX-OBJECTS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.o,$(CXX-SOURCES))
 C-DEPS		:= $(patsubst $(SRC-DIR)/%.c,$(OBJ-DIR)/%.d,$(C-SOURCES))
 CXX-DEPS	:= $(patsubst $(SRC-DIR)/%.cpp,$(OBJ-DIR)/%.d,$(CXX-SOURCES))
 
-COMMON-FLAGS = -I./src/lib/minilibc/ -MD -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -fno-builtin -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-unused-function
-C-FLAGS = $(COMMON-FLAGS)
-CXX-FLAGS = $(COMMON-FLAGS) -I./src/lib/ministl -I./src/lib/ministl/config -I./src/lib/ministl/std -I./src/lib/ministl/c_std -I./src/lib/ministl/tr1 -I./src/lib/mystl -std=c++17 -Wall -fno-rtti -fno-exceptions
+COMMON-FLAGS = -MD -Wall -Wextra -Werror -nostdlib -nostdinc -nostartfiles -nodefaultlibs -fno-builtin -Wno-deprecated-declarations -Wno-unused-local-typedefs -Wno-unused-function
+COMMON-INCLUDES = -I./src/lib/klibc/
+
+C-FLAGS = $(COMMON-FLAGS) $(COMMON-INCLUDES)
+
+
+CXX-FLAGS = $(COMMON-FLAGS)
+CXX-FLAGS += -std=c++17 -Wall -fno-rtti -fno-exceptions
+CXX-FLAGS += -I./src/lib/libc++/include
+CXX-FLAGS += -D_LIBCPP_HAS_NO_THREADS -D_LIBCPP_HAS_NO_LONG_LONG -D_LIBCPP_HAS_NO_GLOBAL_FILESYSTEM_NAMESPACE
+CXX-FLAGS += -D_LIBCPP_HAS_NO_STDIN -D_LIBCPP_HAS_NO_STDOUT -D_LIBCPP_HAS_NO_THREAD_UNSAFE_C_FUNCTIONS -D_LIBCPP_HAS_NO_COROUTINES -D_LIBCPP_HAS_NO_UNICODE_CHARS
+CXX-FLAGS += -D_LIBCPP_HAS_NO_BUILTIN_OPERATOR_NEW_DELETE -D_LIBCPP_NO_EXCEPTIONS
+
+# Add c includes last, so that #include_next works
+CXX-FLAGS += $(COMMON-INCLUDES)
+
+
 
 
 all: $(FLOPPY-1440k-IMG)
