@@ -11,7 +11,6 @@
 #include "debug.h"
 
 #include "console.h"
-extern CONSOLE console;
 
 uintptr_t	find_memory_end( const multiboot_info* mbt )
 {

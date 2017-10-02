@@ -6,11 +6,9 @@
 #include "io.h"
 #include "processor.h"
 
-#define bochs_console_putc(c) outportb( 0xe9, c )
-
 void output_bochs_char( char ch, void* )
 {
-	bochs_console_putc( ch );
+	outportb(0xe9, ch);
 }
 
 bool isprintable( char ch )

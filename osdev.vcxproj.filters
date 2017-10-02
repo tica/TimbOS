@@ -62,7 +62,7 @@
       <UniqueIdentifier>{fd163790-0995-4ec7-9c86-760e1cb2d328}</UniqueIdentifier>
     </Filter>
     <Filter Include="lib\klibc">
-      <UniqueIdentifier>{e476ffb4-e71c-4748-a3b6-3bd72a4c126c}</UniqueIdentifier>
+      <UniqueIdentifier>{b8d34164-4e30-40dd-b529-be7936edcaa2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +144,6 @@
     <ClInclude Include="src\devmanager.h">
       <Filter>core\drv</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\stddef.h">
-      <Filter>lib\klibc</Filter>
-    </ClInclude>
     <ClInclude Include="src\diskcacheimpl.h">
       <Filter>core\drv\diskcache</Filter>
     </ClInclude>
@@ -159,14 +156,8 @@
     <ClInclude Include="src\FAT12FileSystem.h">
       <Filter>core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\stdint.h">
-      <Filter>lib\klibc</Filter>
-    </ClInclude>
     <ClInclude Include="src\test\stl_test.h">
       <Filter>test</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lib\minilibc\string.h">
-      <Filter>lib\klibc</Filter>
     </ClInclude>
     <ClInclude Include="src\interlocked.h">
       <Filter>core\ipc</Filter>
@@ -183,28 +174,40 @@
     <ClInclude Include="src\objectdirectory.h">
       <Filter>core\obj</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\stdlib.h">
+    <ClInclude Include="src\lib\klibc\assert.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\wchar.h">
+    <ClInclude Include="src\lib\klibc\ctype.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\assert.h">
+    <ClInclude Include="src\lib\klibc\errno.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\stdio.h">
+    <ClInclude Include="src\lib\klibc\limits.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\limits.h">
+    <ClInclude Include="src\lib\klibc\stddef.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\ctype.h">
+    <ClInclude Include="src\lib\klibc\stdint.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\wctype.h">
+    <ClInclude Include="src\lib\klibc\stdio.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\minilibc\errno.h">
+    <ClInclude Include="src\lib\klibc\stdlib.h">
+      <Filter>lib\klibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\klibc\string.h">
+      <Filter>lib\klibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\klibc\time.h">
+      <Filter>lib\klibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\klibc\wchar.h">
+      <Filter>lib\klibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\klibc\wctype.h">
       <Filter>lib\klibc</Filter>
     </ClInclude>
   </ItemGroup>
@@ -334,14 +337,8 @@
     <ClCompile Include="src\FAT12FileSystem.cpp">
       <Filter>core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\minilibc\stdlib.cpp">
-      <Filter>lib\klibc</Filter>
-    </ClCompile>
     <ClCompile Include="src\test\stl_test.cpp">
       <Filter>test</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lib\minilibc\string.cpp">
-      <Filter>lib\klibc</Filter>
     </ClCompile>
     <ClCompile Include="src\syscall.cpp">
       <Filter>core\syscall</Filter>
@@ -352,13 +349,19 @@
     <ClCompile Include="src\objectmanager.cpp">
       <Filter>core\obj</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\minilibc\errno.cpp">
+    <ClCompile Include="src\lib\klibc\errno.cpp">
       <Filter>lib\klibc</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\minilibc\wchar.cpp">
+    <ClCompile Include="src\lib\klibc\stdio.cpp">
       <Filter>lib\klibc</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\minilibc\stdio.cpp">
+    <ClCompile Include="src\lib\klibc\stdlib.cpp">
+      <Filter>lib\klibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\klibc\string.cpp">
+      <Filter>lib\klibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lib\klibc\wchar.cpp">
       <Filter>lib\klibc</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,6 @@
 
 #include "debug.h"
 #include "console.h"
-extern CONSOLE console;
 
 class PhysicalPool
 {

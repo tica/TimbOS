@@ -9,7 +9,7 @@
 
 #include <list>
 #include <cstddef>
-#include <string.h>
+#include <cstring>
 
 enum TASK_STATE
 {

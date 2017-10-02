@@ -10,7 +10,7 @@
 #include "console.h"
 #include "mm.h"
 
-#include <string.h>
+#include <cstring>
 
 void invlpg( uintptr_t virtual_addr )
 {
@@ -82,8 +82,6 @@ void mm::paging::init_unmap_0()
 	KernelPageDirectory[0x000].present = 0;
 	invlpg( 0 );
 }
-
-extern CONSOLE console;
 
 void mm::paging::paging_build_kernel_table( multiboot_elf_section_header_table* esht, uintptr_t kernel_base )
 {

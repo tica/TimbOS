@@ -4,7 +4,6 @@
 #include "irq.h"
 
 #include "console.h"
-extern CONSOLE console;
 
 #include "debug.h"
 

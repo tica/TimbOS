@@ -131,6 +131,9 @@
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='test|Win32'">$(ProjectDir)\runmake.cmd clean</NMakeCleanCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='test|x64'">$(ProjectDir)\runmake.cmd clean</NMakeCleanCommandLine>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeIncludeSearchPath>$(ProjectDir)\src\lib\libc++\include;$(ProjectDir)\src\lib\klibc;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,17 +156,18 @@
     <ClInclude Include="src\irq.h" />
     <ClInclude Include="src\isr.h" />
     <ClInclude Include="src\kb.h" />
-    <ClInclude Include="src\lib\minilibc\assert.h" />
-    <ClInclude Include="src\lib\minilibc\ctype.h" />
-    <ClInclude Include="src\lib\minilibc\errno.h" />
-    <ClInclude Include="src\lib\minilibc\limits.h" />
-    <ClInclude Include="src\lib\minilibc\stdio.h" />
-    <ClInclude Include="src\lib\minilibc\stdlib.h" />
-    <ClInclude Include="src\lib\minilibc\string.h" />
-    <ClInclude Include="src\lib\minilibc\stddef.h" />
-    <ClInclude Include="src\lib\minilibc\stdint.h" />
-    <ClInclude Include="src\lib\minilibc\wchar.h" />
-    <ClInclude Include="src\lib\minilibc\wctype.h" />
+    <ClInclude Include="src\lib\klibc\assert.h" />
+    <ClInclude Include="src\lib\klibc\ctype.h" />
+    <ClInclude Include="src\lib\klibc\errno.h" />
+    <ClInclude Include="src\lib\klibc\limits.h" />
+    <ClInclude Include="src\lib\klibc\stddef.h" />
+    <ClInclude Include="src\lib\klibc\stdint.h" />
+    <ClInclude Include="src\lib\klibc\stdio.h" />
+    <ClInclude Include="src\lib\klibc\stdlib.h" />
+    <ClInclude Include="src\lib\klibc\string.h" />
+    <ClInclude Include="src\lib\klibc\time.h" />
+    <ClInclude Include="src\lib\klibc\wchar.h" />
+    <ClInclude Include="src\lib\klibc\wctype.h" />
     <ClInclude Include="src\mbtutil.h" />
     <ClInclude Include="src\mm.h" />
     <ClInclude Include="src\mmdef.h" />
@@ -219,11 +223,11 @@
     <ClCompile Include="src\isr.cpp" />
     <ClCompile Include="src\kb.cpp" />
     <ClCompile Include="src\kernel.cpp" />
-    <ClCompile Include="src\lib\minilibc\errno.cpp" />
-    <ClCompile Include="src\lib\minilibc\stdio.cpp" />
-    <ClCompile Include="src\lib\minilibc\string.cpp" />
-    <ClCompile Include="src\lib\minilibc\stdlib.cpp" />
-    <ClCompile Include="src\lib\minilibc\wchar.cpp" />
+    <ClCompile Include="src\lib\klibc\errno.cpp" />
+    <ClCompile Include="src\lib\klibc\stdio.cpp" />
+    <ClCompile Include="src\lib\klibc\stdlib.cpp" />
+    <ClCompile Include="src\lib\klibc\string.cpp" />
+    <ClCompile Include="src\lib\klibc\wchar.cpp" />
     <ClCompile Include="src\mm.cpp" />
     <ClCompile Include="src\objectmanager.cpp" />
     <ClCompile Include="src\pagedir.cpp" />
