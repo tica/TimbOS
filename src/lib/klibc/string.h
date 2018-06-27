@@ -9,7 +9,7 @@ void* memset( void* destination, unsigned char value, size_t count );
 char* strcat( char* destination, char* source );
 int strcmp( const char* s1, const char* s2 );
 int strncmp( const char* s1, const char* s2, size_t count );
-size_t strlen( const char* s );
+extern "C" size_t strlen( const char* s );
 
 char *strcpy(char *dest, const char *src);
 char *strncpy(char *dest, const char *src, size_t n);

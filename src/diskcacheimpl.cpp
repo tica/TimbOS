@@ -22,7 +22,7 @@ class DiskCacheBuffer
 
 	unsigned int		_lock_count;
 
-	void*				_buffer;
+	void*				_buffer;	
 
 	DiskCacheBufferStatus	_status;
 

@@ -8,7 +8,7 @@
 
 void output_bochs_char( char ch, void* p );
 void debug_bochs_memdump( const void* addr, unsigned int length );
-void panic( const char* txt, ... );
+[[noreturn]] void panic( const char* txt, ... );
 
 #define debug_bochs_printf( ... ) format_string( output_bochs_char, 0, __VA_ARGS__ )
 

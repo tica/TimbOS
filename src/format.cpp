@@ -25,10 +25,11 @@ void format_number( output_func_t output, void* ptr, unsigned int number )
 	output( digit_chars[digit], ptr );
 }
 
-void format_number_hex( output_func_t output, void* ptr, unsigned long long number, int width )
+void format_number_hex( output_func_t output, void* ptr, unsigned long long number, int width, bool upper )
 {
-	//format_chars( output, ptr, "0x" );
-	char digit_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	const char digit_chars_lower[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	const char digit_chars_upper[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	const char* digit_chars = upper ? digit_chars_upper : digit_chars_lower;
 
 	unsigned int shift = width > 0 ? width * 4 : 64;
 	do
@@ -43,10 +44,11 @@ void format_number_hex( output_func_t output, void* ptr, unsigned long long numb
 	while( shift != 0 );
 }
 
-void format_number_hex( output_func_t output, void* ptr, unsigned int number, int width )
+void format_number_hex( output_func_t output, void* ptr, unsigned int number, int width, bool upper)
 {
-	//format_chars( output, ptr, "0x" );
-	char digit_chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	const char digit_chars_lower[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	const char digit_chars_upper[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	const char* digit_chars = upper ? digit_chars_upper : digit_chars_lower;
 
 	unsigned int shift = width > 0 ? width * 4 : 32;
 	do
@@ -62,6 +64,11 @@ int isdigit( char ch )
 {
 	return ch >= '0' && ch <= '9';
 }
+
+bool isupper(char ch)
+{
+	return (ch >= 'A') && (ch <= 'Z');
+}
   
 void format_string_varg( output_func_t output, void* ptr, const char* format, va_list ap )
 {	
@@ -70,6 +77,13 @@ void format_string_varg( output_func_t output, void* ptr, const char* format, va
 		if( *format == '%' )
 		{
 			format++;
+
+			//bool leading_zeros = false;
+			if (bool leading_zeros = *format == '0')
+			{
+				leading_zeros = true;
+				++format;
+			}
 
 			int width = 0;
 			if( isdigit( *format ) )
@@ -92,15 +106,17 @@ void format_string_varg( output_func_t output, void* ptr, const char* format, va
 			case 's':
 				format_chars( output, ptr, va_arg( ap, char* ) );
 				break;
+			case 'X':
 			case 'x':
 			case 'p':
+			case 'P':
 				if( long_mode )
 				{
-					format_number_hex( output, ptr, va_arg( ap, unsigned long long ), width );
+					format_number_hex( output, ptr, va_arg( ap, unsigned long long ), width, isupper(*format) );
 				}
 				else
 				{
-					format_number_hex( output, ptr, va_arg( ap, unsigned int ), width );
+					format_number_hex( output, ptr, va_arg( ap, unsigned int ), width, isupper(*format));
 				}
 				break;
 			case 'c':

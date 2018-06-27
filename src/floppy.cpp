@@ -690,7 +690,7 @@ void floppy_probe( drv::DeviceManager& mgr )
 	if( driveTypes )
 	{
 		auto controller = new FloppyController( 0x03f0 );
-		mgr.add_device( controller );
+		mgr.add_device( controller, "/floppy" );
 
 		FloppyDriveType driveType0 = (FloppyDriveType)(driveTypes >> 4);
 		FloppyDriveType driveType1 = (FloppyDriveType)(driveTypes & 0xF);
@@ -698,7 +698,7 @@ void floppy_probe( drv::DeviceManager& mgr )
 		if( driveType0 )
 		{
 			floppy0 = new FloppyDrive( 0, driveType0, controller );
-			mgr.add_device( floppy0 );
+			mgr.add_device( floppy0, "/floppy/0" );
 		}
 		if( driveType1 )
 		{

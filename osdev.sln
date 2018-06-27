@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osdev", "osdev.vcxproj", "{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osdev.test", "test\osdev.test.vcxproj", "{B9485861-F445-4FD9-8552-0A13F59BF16F}"
@@ -17,16 +19,14 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Debug|Win32.Build.0 = Debug|Win32
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Debug|x64.ActiveCfg = Debug|x64
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Debug|x64.Build.0 = Debug|x64
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Debug|x64.ActiveCfg = Debug|Win32
 		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Release|Win32.ActiveCfg = Release|Win32
 		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Release|Win32.Build.0 = Release|Win32
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Release|x64.ActiveCfg = Release|x64
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Release|x64.Build.0 = Release|x64
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|Win32.ActiveCfg = test|Win32
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|Win32.Build.0 = test|Win32
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|x64.ActiveCfg = test|x64
-		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|x64.Build.0 = test|x64
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.Release|x64.ActiveCfg = Release|Win32
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|Win32.ActiveCfg = Release|Win32
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|Win32.Build.0 = Release|Win32
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|x64.ActiveCfg = Release|Win32
+		{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}.test|x64.Build.0 = Release|Win32
 		{B9485861-F445-4FD9-8552-0A13F59BF16F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B9485861-F445-4FD9-8552-0A13F59BF16F}.Debug|Win32.Build.0 = Debug|Win32
 		{B9485861-F445-4FD9-8552-0A13F59BF16F}.Debug|x64.ActiveCfg = Debug|x64
@@ -42,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC30058E-941D-4F05-BB9D-118E6473629E}
 	EndGlobalSection
 EndGlobal

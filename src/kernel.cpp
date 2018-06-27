@@ -25,6 +25,10 @@
 
 #include "test/stl_test.h"
 
+#include <string>
+#include <atomic>
+#include <array>
+
 extern "C" void gdt_install( void );
 
 
@@ -49,7 +53,7 @@ void taskX( void )
 
 	while( true )
 	{
-		if( ++skip == 1000 )
+		if( ++skip == 10000 )
 		{
 			skip = 0;
 			console.printf( "%c", ch );
@@ -58,21 +62,43 @@ void taskX( void )
 }
 
 int count_a = 0, count_b = 0;
-int global_counter;
-int counting_cs = 0;
+volatile int global_counter;
+uint32_t counting_cs = 0;
+uint32_t printing_cs = 0;
 
 template<char ch, int& local>
 void counting_test( void )
 {
-	for( local = 0; local < 1000; ++local )
+	for( int i = 1; i <= 100'000'000; ++i )
 	{
+		//interlocked::enter( &counting_cs );
+
+		//atomic_counter += 1;
+
+		//interlocked::leave( &counting_cs );
+
+		/*
+		if (ch == 'B')
+		{
+			panic("moep");
+		}		
+		*/
+
+		local += 1;
 		global_counter += 1;
 
-		interlocked::enter( &counting_cs );
+		if (i % 1000000 == 0)
+		{
+			interlocked::enter(&printing_cs);
+			debug_bochs_printf("Task %c: a = %d b = %d global = %d\n", ch, count_a, count_b, global_counter);
+			interlocked::leave(&printing_cs);
+		}
+	}
 
-		console.printf( "Task %c: a = %d b = %d global = %d\n", ch, count_a, count_b, global_counter );
-
-		interlocked::leave( &counting_cs );
+	{
+		interlocked::enter(&printing_cs);
+		debug_bochs_printf("DONE %c: a = %d b = %d global = %d\n", ch, count_a, count_b, global_counter);
+		interlocked::leave(&printing_cs);
 	}
 
 	while( 1 );
@@ -200,11 +226,12 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 
 	console.printf( "idle\n" );	
 
-	auto floppy0 = devmgr.floppy0_cache();
-	auto bootSect = floppy0->cache( 0, 1 );
-	bootSect->lock();
+	auto floppy0 = devmgr.get("/floppy/0");
 
-	auto fs = fs::FAT12FileSystem::tryCreate( floppy0, bootSect );
+	std::array<char, 512> bootSectorData;
+	floppy0->read(0, 1, &bootSectorData);
+
+	auto fs = fs::FAT12FileSystem::tryCreate( floppy0, bootSectorData.data());
 	
 	auto root = fs->root_directory();
 
@@ -220,8 +247,6 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	}
 	debug_bochs_printf( "root->next returned false\n" );
 
-	bootSect->unlock();
-
 	//test_stl();
 
 	//scheduler::new_task( mm::alloc_pages(), (void*)floppy_test );
@@ -230,6 +255,7 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 	
 	//scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'A', count_a> );
 	//scheduler::new_task( mm::alloc_pages(), (void*)counting_test<'B', count_b> );
+
 
 	// stay!
 	while( 1 )

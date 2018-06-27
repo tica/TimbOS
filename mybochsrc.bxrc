@@ -3,8 +3,8 @@ plugin_ctrl: unmapped=1, biosdev=1, speaker=1, extfpuirq=1, gameport=1
 config_interface: win32config
 display_library: win32
 memory: host=128, guest=128
-romimage: file="C:\Program Files (x86)\Bochs-2.6/BIOS-bochs-latest"
-vgaromimage: file="C:\Program Files (x86)\Bochs-2.6/VGABIOS-lgpl-latest"
+romimage: file="C:\Program Files (x86)\Bochs-2.6.9/BIOS-bochs-latest"
+vgaromimage: file="C:\Program Files (x86)\Bochs-2.6.9/VGABIOS-lgpl-latest"
 boot: floppy
 floppy_bootsig_check: disabled=0
 floppya: type=1_44, 1_44="floppy.1440k.img", status=inserted

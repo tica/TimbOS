@@ -281,20 +281,13 @@ struct cpu_state* keyboard_handler(struct cpu_state *r)
 		handle_lock_flags(scancode);
 		handle_kbdleds();
 
-		
-		debug_bochs_printf( "%d", scancode );
+		char ch = shift ? kbdger_upper[scancode] : kbdger[scancode];
 
+		debug_bochs_printf( "key event: scancode = %d, (0x%02X '%c')\n", scancode, ch, ch );
 
-		if(kbdus[scancode] != 0)
+		if (kbdger[scancode])
 		{
-			if(!shift)
-			{
-				console.printf( "%c", kbdger[scancode] );
-			}
-			else
-			{
-				console.printf( "%c", kbdger_upper[scancode] );
-			}
+			console.printf("%c", ch);
 		}
     }
 
@@ -304,6 +297,14 @@ struct cpu_state* keyboard_handler(struct cpu_state *r)
 /* Installs the keyboard handler into IRQ1 */
 void keyboard::init( void )
 {
+	outportb(0x60, 0xF0);
+	outportb(0x60, 0x03);
+
+	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
+	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
+	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
+	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
+	
 	debug_bochs_printf( "keyboard_install..." );
     irq::install_handler(1, keyboard_handler);
 	debug_bochs_printf( "done\n" );

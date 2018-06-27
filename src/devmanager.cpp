@@ -2,28 +2,37 @@
 #include "system.h"
 #include "devmanager.h"
 
-#include "diskcacheimpl.h"
-
 #include "console.h"
 
-static drv::itf::IDiskCache* s_floppy0_cache = 0;
 
 
-void	drv::DeviceManager::add_device( itf::IDriverBase* dev )
+void	drv::DeviceManager::add_device( itf::IDriverBase* dev, const char* name )
 {
-	console.printf( "DeviceManager: Added device (%s)\n", dev->description() );
+	auto node = std::make_unique<DriverTreeNode>( name, dev );
+
+	_devices.push_back(std::move(node));
+
+	console.printf( "DeviceManager: Added device %s - (%s)\n", name, dev->description() );
 }
 
-void	drv::DeviceManager::add_device( itf::IBlockDevice* dev )
+void	drv::DeviceManager::add_device( itf::IBlockDevice* dev, const char* name)
 {
-	console.printf( "DeviceManager: Added device (%s)\n", dev->description() );
+	auto node = std::make_unique<DriverTreeNode>(name, dev);
 
-	s_floppy0_cache = new drv::DiskCache( dev );
+	_devices.push_back( std::move(node) );
 
-	console.printf( "DeviceManager: Added device (%s)\n", s_floppy0_cache->description() );
+	console.printf( "DeviceManager: Added device %s - (%s)\n", name, dev->description() );
 }
 
-drv::itf::IDiskCache*	drv::DeviceManager::floppy0_cache()
+drv::itf::IBlockDevice* drv::DeviceManager::get(const std::string& path)
 {
-	return s_floppy0_cache;
+	for (auto&& node : _devices)
+	{
+		if (node->name == path)
+		{
+			return reinterpret_cast<drv::itf::IBlockDevice*>(node->driver);
+		}
+	}
+
+	return nullptr;
 }

@@ -5,6 +5,7 @@
 #include_next <stdio.h>
 #include <cstddef>
 #include <list>
+#include <string>
 
 #include "driverbase.h"
 #include "blockdevice.h"
@@ -16,17 +17,24 @@ namespace drv
 	{
 		struct DriverTreeNode
 		{
-			itf::IDriverBase*			driver;
-			std::list<DriverTreeNode*>	children;
+			std::string									name;
+			itf::IDriverBase*							driver;
+			std::list<std::unique_ptr<DriverTreeNode>>	children;
+
+			DriverTreeNode(std::string n, itf::IDriverBase* ptr)
+				: name{ std::move(n) }
+				, driver{ ptr }
+			{
+			}
 		};
 
-		std::list<DriverTreeNode*>	_devices;
+		std::list<std::unique_ptr<DriverTreeNode>>	_devices;
 
 	public:
-		void	add_device( itf::IDriverBase* dev );
-		void	add_device( itf::IBlockDevice* dev );
+		void	add_device( itf::IDriverBase* dev, const char* name );
+		void	add_device( itf::IBlockDevice* dev, const char* name );
 
-		itf::IDiskCache*	floppy0_cache();
+		itf::IBlockDevice* get(const std::string& path);
 	};
 }
 

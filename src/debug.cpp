@@ -9,6 +9,7 @@
 void output_bochs_char( char ch, void* )
 {
 	outportb(0xe9, ch);
+	// outportb(0x3F8, ch); // COM1
 }
 
 bool isprintable( char ch )
