@@ -31,7 +31,7 @@ void * calloc(size_t count, size_t eltsize);
 void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
-extern "C" void abort(void);
+extern "C" [[noreturn]] void abort(void);
 int atexit(void(*function)(void));
 void exit(int status);
 void _Exit(int status);

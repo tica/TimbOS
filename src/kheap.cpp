@@ -25,6 +25,12 @@ void*	operator new(size_t size)
 	return mm::heap::alloc(size);
 }
 
+void* operator new(size_t size, std::align_val_t)
+{
+	TRACE1(size);
+	return mm::heap::alloc(size);
+}
+
 void*	operator new[](size_t size)
 {
 	TRACE1(size);
@@ -32,6 +38,12 @@ void*	operator new[](size_t size)
 }
 
 void operator delete(void* ptr)
+{
+	TRACE1(ptr);
+	return mm::heap::free(ptr);
+}
+
+void operator delete(void* ptr, std::align_val_t)
 {
 	TRACE1(ptr);
 	return mm::heap::free(ptr);

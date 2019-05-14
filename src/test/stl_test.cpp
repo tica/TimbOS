@@ -124,7 +124,7 @@ namespace
 		debug_bochs_printf( "\n>>END test_string\n\n" );
 	}
 
-#if 0
+#if 1
 	void test_shared_ptr( void )
 	{
 		debug_bochs_printf( "\n<<BEGIN test_shared_ptr\n" );
@@ -137,6 +137,20 @@ namespace
 		debug_bochs_printf( "*p = %d, *q = %d\n", *p, *q );
 
 		p.reset();
+
+		std::weak_ptr<int> w(q);
+
+		std::shared_ptr<int> s = w.lock();
+
+		debug_bochs_printf("s present = %d\n", s != nullptr);
+		debug_bochs_printf("*q = %d, *s = %d\n", *q, *s);
+
+		s.reset();
+		q.reset();
+
+		s = w.lock();
+
+		debug_bochs_printf("s present = %d\n", s != nullptr);
 
 		debug_bochs_printf( "\n>>END test_shared_ptr\n\n" );
 	}
@@ -155,5 +169,5 @@ void test_stl( void )
 
 	test_string();
 
-	//test_shared_ptr();
+	test_shared_ptr();
 }

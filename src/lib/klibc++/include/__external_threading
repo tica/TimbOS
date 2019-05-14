@@ -1,0 +1,33 @@
+
+#pragma once
+
+#include <cstdint>
+
+typedef uint32_t __libcpp_mutex_t;
+typedef uint32_t __libcpp_condvar_t;
+typedef uint32_t __libcpp_recursive_mutex_t;
+typedef uint32_t __libcpp_thread_id;
+typedef uint32_t __libcpp_tls_key;
+
+typedef void* __libcpp_thread_t;
+
+#define _LIBCPP_MUTEX_INITIALIZER 0
+#define _LIBCPP_CONDVAR_INITIALIZER 0
+#define _LIBCPP_TLS_DESTRUCTOR_CC
+#define _LIBCPP_NULL_THREAD 0
+
+__libcpp_thread_id __libcpp_thread_get_current_id( void );
+bool __libcpp_thread_id_equal( __libcpp_thread_id __a, __libcpp_thread_id __b );
+bool __libcpp_thread_id_less( __libcpp_thread_id __a, __libcpp_thread_id __b );
+void __libcpp_thread_yield( void );
+void* __libcpp_tls_get( __libcpp_tls_key __key );
+
+int __libcpp_tls_create(__libcpp_tls_key* __key,
+                        void(_LIBCPP_TLS_DESTRUCTOR_CC* __at_exit)(void*));
+
+bool __libcpp_thread_isnull( const __libcpp_thread_t* __t );
+__libcpp_thread_id __libcpp_thread_get_id( const __libcpp_thread_t* __t );
+
+bool __libcpp_mutex_trylock( __libcpp_mutex_t* __m );
+bool __libcpp_mutex_lock( __libcpp_mutex_t* __m );
+bool __libcpp_mutex_unlock( __libcpp_mutex_t* __m );

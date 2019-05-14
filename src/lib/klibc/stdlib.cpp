@@ -3,6 +3,8 @@
 
 extern "C" void abort()
 {
+	while (1)
+		;
 }
 
 long labs(long x)
