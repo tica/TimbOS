@@ -26,7 +26,6 @@
 #include "test/stl_test.h"
 
 #include <string>
-#include <atomic>
 #include <array>
 
 extern "C" void gdt_install( void );
@@ -153,6 +152,33 @@ void sparta()
 	console.printf( "\n" );
 }
 
+void dirtree( fs::IDirectoryEnum& dir, int indent = 0 )
+{
+	std::shared_ptr<fs::IFileSystemEntry> file;
+
+	while( dir.next( file ) )
+	{
+		//debug_bochs_printf( "dir.next returned true\n" );
+		console.printf( "%s%s\n", std::string(indent, ' ').c_str(), file->name() );
+
+		if( file->name() == "." || file->name() == ".." )
+		{
+		}
+		else
+		{
+			auto children = file->children();
+			if( children )
+			{
+				dirtree( *children, indent + 2 );
+			}
+		}
+
+		//file->get_name( file_name, sizeof(file_name) );
+		//console.printf("file = %s\n", file_name);
+	}
+	//debug_bochs_printf( "dir.next returned false\n" );
+}
+
 extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 {
 	TRACE2( mbt_info, magic );
@@ -226,26 +252,18 @@ extern "C" void kmain( multiboot_info* mbt_info, unsigned int magic )
 
 	console.printf( "idle\n" );	
 
+#if 1
 	auto floppy0 = devmgr.get("/floppy/0");
 
 	std::array<char, 512> bootSectorData;
 	floppy0->read(0, 1, &bootSectorData);
 
-	auto fs = fs::FAT12FileSystem::tryCreate( floppy0, bootSectorData.data());
+	auto fs = fs::fat12::FAT12FileSystem::tryCreate( floppy0, bootSectorData.data());
 	
 	auto root = fs->root_directory();
 
-	fs::IFileSystemEntry* file;
-	//char file_name[20] = {};
-	while( root->next( &file ) )
-	{
-		debug_bochs_printf( "root->next returned true\n" );
-		debug_bochs_printf( "file = %p\n", file );		
-
-		//file->get_name( file_name, sizeof(file_name) );
-		//console.printf("file = %s\n", file_name);
-	}
-	debug_bochs_printf( "root->next returned false\n" );
+	dirtree( *root );	
+#endif
 
 	//test_stl();
 

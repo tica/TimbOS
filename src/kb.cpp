@@ -297,6 +297,7 @@ struct cpu_state* keyboard_handler(struct cpu_state *r)
 /* Installs the keyboard handler into IRQ1 */
 void keyboard::init( void )
 {
+	/*
 	outportb(0x60, 0xF0);
 	outportb(0x60, 0x03);
 
@@ -304,6 +305,7 @@ void keyboard::init( void )
 	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
 	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
 	debug_bochs_printf("kb f0 00: 0x%02X\n", inportb(0x60));
+	*/
 	
 	debug_bochs_printf( "keyboard_install..." );
     irq::install_handler(1, keyboard_handler);

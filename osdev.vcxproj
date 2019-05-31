@@ -14,17 +14,18 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{3CAB3372-2C2C-4DDC-8866-641FC4095CE9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,11 +40,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeOutput>osdev2.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeOutput>
+    </NMakeOutput>
+    <NMakePreprocessorDefinitions>_DEBUG;_XKEYCHECK_H;_CRT_FUNCTIONS_REQUIRED=0;_LIBCPP_STD_VER=17;_LIBCPP_HAS_NO_GLOBAL_FILESYSTEM_NAMESPACE;_LIBCPP_HAS_NO_STDIN;_LIBCPP_HAS_NO_STDOUT;_LIBCPP_HAS_NO_LONG_LONG;_LIBCPP_NO_VCRUNTIME</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"C:\Windows\sysnative\bash.exe" -c "/mnt/e/Documents/dev/TimbOS/runmake.sh"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"C:\Windows\sysnative\bash.exe" -c "/mnt/e/Documents/dev/TimbOS/runmake.sh clean"</NMakeCleanCommandLine>
-    <NMakeIncludeSearchPath>$(ProjectDir)\src\lib\libc++\include;$(ProjectDir)\src\lib\klibc;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(ProjectDir)\src\lib\libc++\include;$(ProjectDir)\src\lib\klibc</NMakeIncludeSearchPath>
+    <IncludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>osdev2.exe</NMakeOutput>
@@ -63,7 +66,14 @@
     <ClInclude Include="src\driverbase.h" />
     <ClInclude Include="src\drv.h" />
     <ClInclude Include="src\elf.h" />
+    <ClInclude Include="src\FAT12.h" />
+    <ClInclude Include="src\FAT12Directory.h" />
+    <ClInclude Include="src\FAT12DirectoryEnum.h" />
+    <ClInclude Include="src\FAT12DirectoryEnumBase.h" />
+    <ClInclude Include="src\FAT12FAT.h" />
+    <ClInclude Include="src\FAT12File.h" />
     <ClInclude Include="src\FAT12FileSystem.h" />
+    <ClInclude Include="src\FAT12Item.h" />
     <ClInclude Include="src\format.h" />
     <ClInclude Include="src\fs.h" />
     <ClInclude Include="src\gdt.h" />
@@ -86,6 +96,7 @@
     <ClInclude Include="src\lib\klibc\time.h" />
     <ClInclude Include="src\lib\klibc\wchar.h" />
     <ClInclude Include="src\lib\klibc\wctype.h" />
+    <ClInclude Include="src\FAT12LowLevel.h" />
     <ClInclude Include="src\mbtutil.h" />
     <ClInclude Include="src\mm.h" />
     <ClInclude Include="src\mmdef.h" />
@@ -131,6 +142,8 @@
     <ClCompile Include="src\devmanager.cpp" />
     <ClCompile Include="src\diskcacheimpl.cpp" />
     <ClCompile Include="src\drvmanager.cpp" />
+    <ClCompile Include="src\FAT12Directory.cpp" />
+    <ClCompile Include="src\FAT12DirectoryEnumBase.cpp" />
     <ClCompile Include="src\FAT12FileSystem.cpp" />
     <ClCompile Include="src\floppy.cpp" />
     <ClCompile Include="src\format.cpp" />

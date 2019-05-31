@@ -1,4 +1,6 @@
 
+#define NDEBUG
+
 #include "system.h"
 #include "kheap.h"
 

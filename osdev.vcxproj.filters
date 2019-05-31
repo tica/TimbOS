@@ -64,6 +64,9 @@
     <Filter Include="lib\klibc">
       <UniqueIdentifier>{b8d34164-4e30-40dd-b529-be7936edcaa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\fs\FAT12">
+      <UniqueIdentifier>{53832188-795d-493f-a81c-c1aeb833334f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\video.h">
@@ -153,9 +156,6 @@
     <ClInclude Include="src\fs.h">
       <Filter>core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="src\FAT12FileSystem.h">
-      <Filter>core\fs</Filter>
-    </ClInclude>
     <ClInclude Include="src\test\stl_test.h">
       <Filter>test</Filter>
     </ClInclude>
@@ -209,6 +209,33 @@
     </ClInclude>
     <ClInclude Include="src\lib\klibc\wctype.h">
       <Filter>lib\klibc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12Item.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12Directory.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12File.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12FAT.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12DirectoryEnumBase.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12DirectoryEnum.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12LowLevel.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12FileSystem.h">
+      <Filter>core\fs\FAT12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FAT12.h">
+      <Filter>core\fs\FAT12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -334,9 +361,6 @@
     <ClCompile Include="src\diskcacheimpl.cpp">
       <Filter>core\drv\diskcache</Filter>
     </ClCompile>
-    <ClCompile Include="src\FAT12FileSystem.cpp">
-      <Filter>core\fs</Filter>
-    </ClCompile>
     <ClCompile Include="src\test\stl_test.cpp">
       <Filter>test</Filter>
     </ClCompile>
@@ -363,6 +387,15 @@
     </ClCompile>
     <ClCompile Include="src\lib\klibc\wchar.cpp">
       <Filter>lib\klibc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FAT12DirectoryEnumBase.cpp">
+      <Filter>core\fs\FAT12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FAT12Directory.cpp">
+      <Filter>core\fs\FAT12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FAT12FileSystem.cpp">
+      <Filter>core\fs\FAT12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
